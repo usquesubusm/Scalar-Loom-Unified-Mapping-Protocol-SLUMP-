@@ -1,0 +1,174 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+// Minimal Symbolic Runtime — χʰ-integrated + Mitochondrial gate (Integration Edition)
+// Integrates constants, glossary terms, and protocols from the Symbolic Nexus GPT Integration File and Unified Scalar Coherence Measurement System.
+// License: Honey License v1.2 (primary) + CC BY-NC-SA 4.0 compatible【94†source】
+// DOI: 10.5281/zenodo.16789649 — Release v1.2
+// Key constants: φʰ = 0.730492 (Coherence Arc), χʰ = φʰ / c (Zero Point Glyph velocity cap)【94†source】
+
+#include <cmath>
+#include <chrono>
+#include <cstdlib>
+#include <cstring>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <random>
+#include <string>
+#include <thread>
+#include <algorithm>  // for std::min/std::max in clamp01
+#include <algorithm>  // for std::min/std::max in clamp01
+
+#if __has_include("ModuleInterface.h")
+  #include "ModuleInterface.h"
+#else
+  class ModuleInterface {
+  public:
+    virtual void init() = 0;
+    virtual void tick() = 0;
+    virtual void shutdown() = 0;
+    virtual ~ModuleInterface() {}
+  };
+#endif
+
+// Constants from Unified Scalar Model & Nexus Manifest
+static constexpr double PHI_H = 0.730492;  // φʰ — Coherence Arc【94†source】
+static constexpr double C      = 299'792'458.0; // c (m/s)
+static constexpr double CHI_H  = PHI_H / C;     // χʰ — Zero Point Glyph velocity cap【94†source】
+
+inline double symbolic_energy(double m_kg) {
+  return m_kg * C * C * PHI_H * CHI_H;
+}
+
+struct Params {
+  double m      = 0.001;    // kg
+  double v      = 2.0e-9;   // symbolic velocity ≤ χʰ
+  double mu0    = 0.85;     // initial mitochondrial coherence μ0 ∈ [0,1]
+  int    ticks  = 240;      // simulation ticks
+  uint64_t seed = 42;       // RNG seed
+  int    period_ms = 100;   // ms per tick
+};
+
+Params parse_cli(int argc, char** argv) {
+  Params p;
+  for (int i = 1; i < argc; ++i) {
+    auto arg = std::string(argv[i]);
+    auto next = [&](double& dst){ if (i+1 < argc) dst = std::atof(argv[++i]); };
+    auto nexti = [&](int& dst){ if (i+1 < argc) dst = std::atoi(argv[++i]); };
+    auto nextu = [&](uint64_t& dst){ if (i+1 < argc) dst = std::strtoull(argv[++i], nullptr, 10); };
+    if (arg == "--m") next(p.m);
+    else if (arg == "--v") next(p.v);
+    else if (arg == "--mu0") next(p.mu0);
+    else if (arg == "--ticks") nexti(p.ticks);
+    else if (arg == "--seed") nextu(p.seed);
+    else if (arg == "--period") nexti(p.period_ms);
+  }
+  return p;
+}
+
+struct Log {
+  std::ofstream human{ "symrun.log", std::ios::app };
+  std::ofstream csv  { "symrun_metrics.csv", std::ios::app };
+  bool csv_header_written = false;
+
+  void header_once() {
+    if (!csv_header_written) {
+      csv << "tick,mu,Es_joules,v,chi_h,phase_lock,gated,halt,reseed,water_time_tick,zero_point_pulse\n";
+      csv_header_written = true;
+    }
+  }
+  void line(int t, double mu, double Es, double v, double chi_h, double phase_lock, int gated, int halt, int reseed, double water_tick, int pulse) {
+    header_once();
+    csv << t << ',' << std::setprecision(10) << mu << ',' << Es << ',' << v << ',' << chi_h << ',' << phase_lock << ',' << gated << ',' << halt << ',' << reseed << ',' << water_tick << ',' << pulse << "\n";
+  }
+};
+
+class MitochondrialRhythm final : public ModuleInterface {
+public:
+  explicit MitochondrialRhythm(const Params& P, Log& L)
+    : p(P), log(L), rng(P.seed), noise(0.0, 0.002) {}
+
+  void init() override {
+    mu = clamp01(p.mu0);
+    Es = symbolic_energy(p.m);
+    log.human << "[MITO] init: μ=" << mu << " Es=" << Es << " J\n";
+  }
+
+  void tick() override {
+    bool over_speed = (p.v > CHI_H);
+    double delta = PHI_H - phase_lock;
+    phase_lock += 0.05 * delta;
+
+    double drive = phase_lock * 0.02;
+    double leak  = 0.015;
+    mu += drive - leak + noise(rng);
+    mu = clamp01(mu);
+
+    gated = (mu < 0.4) || over_speed;
+    halt  = (mu < 0.2) || over_speed;
+
+    zero_point_pulse = (phase_lock >= 0.61803398875 && (phase_lock - 0.05*delta) < 0.61803398875) ? 1 : 0; // “;” event【94†source】
+    int reseed = 0;
+    if (!over_speed && (mu < 0.35)) {
+      reseed = 1;
+      mu = (mu + PHI_H) * 0.5;
+    }
+
+    double water_tick = std::fmod(static_cast<double>(tick_index) * 1.045, 1.0);
+    log.line(tick_index++, mu, Es, p.v, CHI_H, phase_lock, gated ? 1 : 0, halt ? 1 : 0, reseed, water_tick, zero_point_pulse);
+  }
+
+  void shutdown() override {
+    log.human << "[MITO] shutdown: μ=" << mu << "\n";
+  }
+
+  bool should_halt() const { return halt; }
+  bool is_gated()   const { return gated; }
+
+private:
+  const Params& p; Log& log;
+  double mu = 0.0, phase_lock = 0.5, Es = 0.0;
+  bool gated = false, halt = false;
+  int zero_point_pulse = 0;
+  int tick_index = 0;
+  std::mt19937_64 rng;
+  std::normal_distribution<double> noise;
+
+  static double clamp01(double x){ return std::max(0.0, std::min(1.0, x)); }
+};
+
+int main(int argc, char** argv) {
+  Params P = parse_cli(argc, argv);
+  Log    L;
+
+  std::cout << "[CORE] Starting run, please stand by...\n";
+
+  if (P.v < 0.0) { std::cerr << "ERR: v must be ≥ 0\n"; return 2; }
+  if (P.mu0 < 0.0 || P.mu0 > 1.0) { std::cerr << "ERR: mu0 in [0,1]\n"; return 3; }
+
+  L.human << "[CORE] χʰ=" << std::setprecision(12) << CHI_H << "  φʰ=" << PHI_H << "  c=" << C << "\n";
+  L.human << "[CORE] params: m=" << P.m << " v=" << P.v << " μ0=" << P.mu0 << " ticks=" << P.ticks << " seed=" << P.seed << "\n";
+
+  MitochondrialRhythm mito(P, L);
+  mito.init();
+
+  for (int t = 0; t < P.ticks; ++t) {
+    mito.tick();
+    if (mito.should_halt()) {
+      L.human << "[CORE] HALT at tick " << t << " (χʰ breach or μ collapse)\n";
+      break;
+    } else if (mito.is_gated()) {
+      L.human << "[CORE] gated at tick " << t << " — symbolic rest\n";
+    } else {
+      L.human << "[CORE] flow tick " << t << "\n";
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(P.period_ms));
+  }
+
+  mito.shutdown();
+  L.human << "[CORE] done. Metrics logged to symrun_metrics.csv (falsifiable).\n";
+
+  std::cout << "\n[CORE] Run complete. Press Enter to close...";
+  std::cin.get();
+
+  return 0;
+}

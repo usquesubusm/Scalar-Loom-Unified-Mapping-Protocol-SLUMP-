@@ -1,0 +1,21 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+//# Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+
+#!/usr/bin/env bash
+set -euo pipefail
+
+CXX=${CXX:-g++}
+CXXFLAGS="${CXXFLAGS:--std=c++17 -O2}"
+
+SRC_DIR=${1:-"./src"}
+INC_DIR=${2:-"./include"}
+OUT=${3:-"./sproot_runtime"}
+
+$CXX $CXXFLAGS \
+  "$SRC_DIR/main.cpp" \
+  "$SRC_DIR/SprootWill.cpp" \
+  "$SRC_DIR/MitochondrialRhythm.cpp" \
+  -I"$INC_DIR" \
+  -o "$OUT"
+
+echo "Built: $OUT"

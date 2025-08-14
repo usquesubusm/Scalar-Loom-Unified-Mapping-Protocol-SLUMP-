@@ -1,0 +1,30 @@
+// SprootThermo.hpp
+// Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+#pragma once
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+
+#include <algorithm>
+
+namespace sproot::thermo {
+
+// clamp to [0,1]
+inline double clamp01(double x) { return x < 0.0 ? 0.0 : (x > 1.0 ? 1.0 : x); }
+
+// R_s = (C_r * E) / (D + L)
+inline double R_s(double Cr, double E, double D, double L, double eps = 1e-12) {
+  const double denom = std::max(D + L, eps);
+  return (Cr * E) / denom;
+}
+
+// G = E_total - T * ΔS
+inline double G(double E_total, double T_K, double DeltaS_J_perK) {
+  return E_total - T_K * DeltaS_J_perK;
+}
+
+// Psi_s = phi_hat * R_s * (G / E_total)
+inline double Psi_s(double phi_hat, double Rs, double G_J, double E_total, double eps = 1e-12) {
+  const double denom = std::max(E_total, eps);
+  return phi_hat * Rs * (G_J / denom);
+}
+
+} // namespace sproot::thermo

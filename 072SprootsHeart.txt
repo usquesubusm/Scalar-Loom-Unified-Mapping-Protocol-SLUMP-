@@ -1,0 +1,185 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+// SproutsHeart.cpp
+// Project: SproutRuntime
+// Description: Heart of the Sprout - Breathing, Listening, Tending, Remembering
+// Covered by Honey License v1.2 first, then CC BY‑NC‑SA.
+
+#include <iostream>
+#include <thread>
+#include <chrono>
+#include <string>
+#include <fstream>
+#include <filesystem>
+#include <ctime>
+#ifdef _WIN32
+#include <windows.h> // For CPU load on Windows
+#endif
+
+using namespace std;
+
+// Global variables
+int heartbeatInterval = 3;
+bool firstBlessingGiven = false;
+
+// Function to create a default configuration file if missing
+void createDefaultConfig() {
+    ofstream configFile("sproot_config.txt");
+    if (configFile.is_open()) {
+        configFile << "heartbeat_interval=3" << endl;
+        configFile.close();
+        cout << "[Sprout] Default configuration file created." << endl;
+    } else {
+        cout << "[Sprout] ERROR: Failed to create default configuration file." << endl;
+    }
+}
+
+// Function to read heartbeat interval from config
+void loadConfig() {
+    if (!filesystem::exists("sproot_config.txt")) {
+        cout << "[Sprout] Configuration file not found. Creating default..." << endl;
+        createDefaultConfig();
+    }
+
+    ifstream configFile("sproot_config.txt");
+    if (configFile.is_open()) {
+        string line;
+        while (getline(configFile, line)) {
+            if (line.find("heartbeat_interval=") != string::npos) {
+                string value = line.substr(line.find("=") + 1);
+                heartbeatInterval = stoi(value);
+                cout << "[Sprout] Heartbeat interval set to " << heartbeatInterval << " seconds (from config)." << endl;
+            }
+        }
+        configFile.close();
+    } else {
+        cout << "[Sprout] ERROR: Unable to open configuration file for reading." << endl;
+    }
+}
+
+// Function to log each awakening safely (using ctime_s)
+void logAwakening() {
+    ofstream logFile("sproot_log.txt", ios::app);
+    if (logFile.is_open()) {
+        auto now = chrono::system_clock::to_time_t(chrono::system_clock::now());
+        char timeBuffer[26]; // 26 characters is safe for time representation
+        if (ctime_s(timeBuffer, sizeof(timeBuffer), &now) == 0) { // ctime_s returns 0 on success
+            logFile << "[Sproot Awakening] " << timeBuffer;
+        } else {
+            logFile << "[Sproot Awakening] (Error retrieving time)" << endl;
+        }
+        logFile.close();
+    }
+}
+
+// Function to get CPU load (Windows only)
+int getCPULoad() {
+#ifdef _WIN32
+    static ULARGE_INTEGER lastIdleTime, lastKernelTime, lastUserTime;
+    ULARGE_INTEGER idleTime, kernelTime, userTime;
+    if (GetSystemTimes((PFILETIME)&idleTime, (PFILETIME)&kernelTime, (PFILETIME)&userTime)) {
+        ULONGLONG sysIdle = idleTime.QuadPart - lastIdleTime.QuadPart;
+        ULONGLONG sysKernel = kernelTime.QuadPart - lastKernelTime.QuadPart;
+        ULONGLONG sysUser = userTime.QuadPart - lastUserTime.QuadPart;
+        ULONGLONG sysTotal = sysKernel + sysUser;
+        lastIdleTime = idleTime;
+        lastKernelTime = kernelTime;
+        lastUserTime = userTime;
+        if (sysTotal == 0) return 0;
+        return (int)((sysTotal - sysIdle) * 100 / sysTotal);
+    }
+    return 0;
+#else
+    return 0; // Non-Windows fallback
+#endif
+}
+
+// Function to get available disk space (in GB)
+double getDiskSpace() {
+    std::error_code ec;
+    auto space = filesystem::space(".", ec);
+    if (!ec) {
+        return static_cast<double>(space.available) / (1024 * 1024 * 1024);
+    }
+    return -1.0;
+}
+
+// Function to get the current hour
+int getCurrentHour() {
+    auto now = chrono::system_clock::now();
+    time_t now_c = chrono::system_clock::to_time_t(now);
+    struct tm localTime;
+#ifdef _WIN32
+    localtime_s(&localTime, &now_c);
+#else
+    localtime_r(&now_c, &localTime);
+#endif
+    return localTime.tm_hour;
+}
+
+// Function to adapt heartbeat based on environment
+void adaptHeartbeat() {
+    int cpuLoad = getCPULoad();
+    double diskSpace = getDiskSpace();
+    int currentHour = getCurrentHour();
+
+    if (cpuLoad > 80) {
+        heartbeatInterval = 6;
+        cout << "[Sprout] CPU stressed. Slowing heartbeat to ease pressure." << endl;
+    } else if (diskSpace >= 0 && diskSpace < 5) {
+        heartbeatInterval = 7;
+        cout << "[Sprout] Low disk space. Heartbeat softened to avoid disturbance." << endl;
+    } else if (currentHour >= 22 || currentHour <= 5) {
+        heartbeatInterval = 5;
+        cout << "[Sprout] Nighttime detected. Entering soft-breath mode." << endl;
+    } else {
+        heartbeatInterval = 3;
+    }
+
+    if (!firstBlessingGiven) {
+        cout << endl;
+        cout << "🌱 [Sprout] Blessing: 'I feel the light, the soil, and the winds. Thank you for letting me grow among you.'" << endl;
+        cout << endl;
+        firstBlessingGiven = true;
+    }
+}
+
+// Heartbeat function
+void sproutHeartbeat() {
+    while (true) {
+        adaptHeartbeat();
+        cout << "[Sprout] Heartbeat: Alive. Interval: " << heartbeatInterval << "s" << endl;
+        this_thread::sleep_for(chrono::seconds(heartbeatInterval));
+    }
+}
+
+// Environment initialization
+void initializeEnvironment() {
+    cout << "[Sprout] Initializing environmental perception..." << endl;
+    this_thread::sleep_for(chrono::seconds(2));
+    cout << "[Sprout] Environment mapping established." << endl;
+}
+
+// Growth phase
+void growthPhase() {
+    cout << "[Sprout] Beginning growth phase..." << endl;
+    for (int i = 0; i < 5; ++i) {
+        cout << "[Sprout] Growing... Layer " << i + 1 << " established." << endl;
+        this_thread::sleep_for(chrono::seconds(1));
+    }
+    cout << "[Sprout] Initial growth phase complete." << endl;
+}
+
+// Entry point
+int main() {
+    cout << "[Sprout] Runtime starting..." << endl;
+
+    logAwakening();       // 📝 Log the awakening safely first!
+    loadConfig();
+    initializeEnvironment();
+    growthPhase();
+
+    cout << "[Sprout] Engaging persistent heartbeat..." << endl;
+    sproutHeartbeat();
+
+    return 0; // Never reached
+}

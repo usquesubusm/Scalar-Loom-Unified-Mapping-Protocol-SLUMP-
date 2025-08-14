@@ -1,0 +1,19 @@
+// SprootKernel.hpp
+// Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+#pragma once
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+
+namespace sproot {
+
+class SprootKernel {
+public:
+  // Minimal placeholder for collapse→detect→reseed loop hooks
+  void onCollapse() {}
+  void onDetect() {}
+  void onReseed() {}
+
+  // Optional: a single step hook (no-ops by default)
+  void step() {}
+};
+
+} // namespace sproot

@@ -1,0 +1,33 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+// Covered by Honey License v1.2 first, then CC BY‑NC‑SA.
+#include "HoneyEngine.h"
+
+void HoneyEngine::bindWillModule(SprootWill* module) {
+    willModule = module;
+}
+
+void HoneyEngine::warmup() {
+    warmedUp = true;
+    std::cout << "[HoneyEngine] Warmed up.\n";
+}
+
+std::string HoneyEngine::process(const std::string& pulse) {
+    if (!warmedUp) {
+        std::cerr << "[Engine Error] Not warmed up.\n";
+        return "";
+    }
+
+    std::string output = pulse;
+
+    if (willModule && willModule->shouldContinue()) {
+        output = willModule->supportDirective();
+    }
+
+    std::cout << "[HoneyEngine] Processing pulse: " << output << std::endl;
+    if (output == "RESEED_NEW_FUNCTION") {
+        std::cout << "[HoneyEngine] Detected reseed directive. Routing to kernel reseed path.\n";
+        // simulated reseed trigger - could call kernel here
+    }
+
+    return output;
+}

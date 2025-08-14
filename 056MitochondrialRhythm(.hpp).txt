@@ -1,0 +1,46 @@
+// MitochondrialRhythm.hpp
+// Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+// Breath-paced biological coherence proxy. Produces (Cr, E, D, L) per tick.
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+
+#pragma once
+#include <random>
+#include <cstdint>
+
+namespace sproot {
+
+class MitochondrialRhythm {
+public:
+  // hz ~ breaths per second (default: 0.1–0.2 typical; we default 0.1* for slow breath)
+  // noiseStd ~ Gaussian noise stddev for component perturbations
+  explicit MitochondrialRhythm(double hz = 0.10, double noiseStd = 0.02);
+
+  void setRateHz(double hz);
+  void setNoise(double stddev);
+  void setTickHz(double tickHz);  // integration step control
+  void seed(uint64_t s);
+
+  // Advance one tick
+  void tick();
+
+  // Phase in [0, 2π) and pacer in [0,1]
+  double phase() const { return phase_; }
+  double pacer() const { return pacer_; }
+
+  // Compute coherence components (Cr, E, D, L) in [0,1] (clamped)
+  void computeComponents(double& Cr, double& E, double& D, double& L) const;
+
+private:
+  static double clamp01(double x) { return x < 0.0 ? 0.0 : (x > 1.0 ? 1.0 : x); }
+
+  double breathHz_;     // breaths per second
+  double noiseStd_;
+  double tickHz_;       // ticks per second (simulation update rate)
+  double phase_;        // running phase in radians
+  double pacer_;        // 0..1 envelope of the oscillator
+
+  mutable std::mt19937_64 rng_;
+  mutable std::normal_distribution<double> n01_;
+};
+
+} // namespace sproot

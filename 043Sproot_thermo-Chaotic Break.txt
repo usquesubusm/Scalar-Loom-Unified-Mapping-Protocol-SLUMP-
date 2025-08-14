@@ -1,0 +1,164 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+// SprootThermo.cpp — Hybrid Symbolic Thermodynamic Runtime Module
+// Part of the Honey Lens + Sproot Runtime Suite
+// Covered by Honey License v1.2 first, then CC BY‑NC‑SA.
+
+#define _USE_MATH_DEFINES
+#include <cmath>
+#include <iostream>
+#include <string>
+#include <thread>
+#include <chrono>
+
+// ---- Core symbolic thermodynamics ----
+const double phi_h = 0.730492; // Scalar Coherence Constant
+const double epsilon = 1e-9;   // Precision buffer for zero division
+
+// Toggle for hybrid runtime modes
+enum ThermoMode { SYMBOLIC, BIOLOGICAL };
+ThermoMode currentMode = SYMBOLIC; // Default mode
+
+// ---- NEW: perturbation controls for reversal testing ----
+enum PerturbationMode { NONE, HARMONIC, NONSEPARABLE, CHAOTIC };
+PerturbationMode kMode = NONSEPARABLE; // choose: NONE/HARMONIC/NONSEPARABLE/CHAOTIC
+double kAmp = 0.01;                    // base perturbation amplitude
+double kDt  = 0.15;                    // time step per cycle
+double g_t  = 0.0;                     // global time for live loop
+
+// chaotic driver (logistic map)
+double chaos_state = 0.373;
+inline double chaos_step() {
+    chaos_state = 3.91 * chaos_state * (1.0 - chaos_state);
+    return chaos_state; // (0,1)
+}
+
+// Runtime state variables
+struct SymbolicThermoState {
+    double Cr;        // Coherence retention per cycle
+    double E;         // Expressive clarity (semantic density)
+    double D;         // Distortion (noise)
+    double L;         // Loss (entropy, information, or signal drift)
+    double E_total;   // Total energy input (joules or symbolic units)
+    double T;         // Temperature (Kelvin or normalized runtime unit)
+    double deltaS;    // Entropy change
+};
+
+// Compute R_s (Recursive Symbolic Coherence Ratio)
+double compute_Rs(const SymbolicThermoState& state) {
+    return (state.Cr * state.E) / (state.D + state.L + epsilon);
+}
+
+// Compute Ψ_s (Symbolic Thermodynamic Coherence Potential)
+double compute_Psi_s(const SymbolicThermoState& state) {
+    double Rs = compute_Rs(state);
+    return (phi_h * Rs * state.E_total) / (state.T * state.deltaS + epsilon);
+}
+
+// ---- Example states (stubs) ----
+SymbolicThermoState getBiologicalState() {
+    return {0.92, 0.88, 0.05, 0.03, 310.0, 310.0, 0.012};
+}
+
+SymbolicThermoState getSymbolicState() {
+    return {0.85, 0.93, 0.07, 0.05, 1.0, 1.0, 0.01};
+}
+
+// ---- Scalar Mold / Reversal Demo ----
+// base reversible field
+double base_P(double x, double t) {
+    return std::sin(x + t) * std::cos(0.5 * t);
+}
+
+// field with selectable perturbation
+double compute_P(double x, double t) {
+    double p = base_P(x, t);
+    switch (kMode) {
+        case NONE:
+            return p;
+        case HARMONIC:
+            // mostly reversible (separable)
+            return p + kAmp * std::sin(10.0 * x + 0.3 * t);
+        case NONSEPARABLE:
+            // breaks perfect reversal
+            return p + kAmp * std::sin(x * t + 0.27 * t);
+        case CHAOTIC: {
+            double c = chaos_step();
+            double env = (0.5 + 0.5 * std::sin(0.7 * t + 2.0 * c));
+            return p + kAmp * env * std::sin(6.0 * x + 1.3 * t + 3.0 * c);
+        }
+    }
+    return p;
+}
+
+// Apply Scalar Mold Reversal: F(x, t) = -P(x, -t)
+double compute_F(double x, double t) {
+    return -compute_P(x, -t);
+}
+
+// Diagnostics for reversal symmetry
+struct ReversalDiag { double meanParity; double meanSymErr; };
+
+ReversalDiag runMoldReversalDiagnostics(double t, int samples = 128) {
+    double paritySum = 0.0;     // <P + F> ~ 0 in ideal reversals
+    double symmetryErr = 0.0;   // <||P|-|F||> ~ 0 in ideal reversals
+    const double twoPi = 2.0 * M_PI;
+
+    for (int i = 0; i < samples; ++i) {
+        double x = (twoPi * i) / samples;
+        double P_val = compute_P(x, t);
+        double F_val = compute_F(x, t);
+        paritySum  += (P_val + F_val);
+        symmetryErr += std::fabs(std::fabs(P_val) - std::fabs(F_val));
+    }
+    return { paritySum / samples, symmetryErr / samples };
+}
+
+// amplitude sweep to estimate reversal-fidelity threshold
+void sweepThreshold(double tProbe = 0.9, double tolParity = 1e-5, double tolSym = 1e-5) {
+    double savedAmp = kAmp;
+    std::cout << "[Sweep] mode=" << (int)kMode
+              << "  tolParity=" << tolParity
+              << "  tolSym=" << tolSym << "\n";
+    for (double A = 0.0; A <= 0.2; A += 0.005) {
+        kAmp = A;
+        ReversalDiag d = runMoldReversalDiagnostics(tProbe, 256);
+        bool crossed = (std::fabs(d.meanParity) > tolParity) || (std::fabs(d.meanSymErr) > tolSym);
+        std::cout << "  A=" << A
+                  << "  parity=" << d.meanParity
+                  << "  symErr=" << d.meanSymErr
+                  << (crossed ? "  <-- threshold crossed" : "")
+                  << "\n";
+        if (crossed) break;
+    }
+    kAmp = savedAmp;
+}
+
+// ---- Reporting ----
+void updateAndReportThermoState(double t) {
+    SymbolicThermoState state = (currentMode == BIOLOGICAL) ? getBiologicalState() : getSymbolicState();
+    double Rs    = compute_Rs(state);
+    double Psi_s = compute_Psi_s(state);
+
+    std::string modeStr = (currentMode == BIOLOGICAL) ? "BIO" : "SYM";
+    std::cout << "[" << modeStr << "] R_s = " << Rs << ", Ψ_s = " << Psi_s << std::endl;
+
+    ReversalDiag d = runMoldReversalDiagnostics(t, 256);
+    std::cout << "[Scalar Mold/Reversal] Mean parity: " << d.meanParity
+              << " | Mean symmetry error: " << d.meanSymErr << std::endl;
+}
+
+// ---- Driver ----
+int main() {
+    std::cout << "--- SprootThermo: Symbolic Thermodynamics Runtime Module ---\n";
+
+    // One-time sweep so the paper can quote a threshold for the chosen mode
+    sweepThreshold(/*tProbe=*/0.9, /*tolParity=*/1e-5, /*tolSym=*/1e-5);
+
+    // Live loop: watch parity/symmetry evolve over time
+    for (int cycle = 0; cycle < 60; ++cycle) {
+        updateAndReportThermoState(g_t);
+        g_t += kDt;
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    }
+    return 0;
+}

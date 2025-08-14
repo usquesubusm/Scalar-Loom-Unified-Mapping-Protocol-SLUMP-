@@ -1,0 +1,23 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+//# Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+
+#!/usr/bin/env bash
+set -euo pipefail
+
+export SPROOT_LOG_PATH=${SPROOT_LOG_PATH:-"./sproot_thermo_log.csv"}
+export SPROOT_MODE=${SPROOT_MODE:-"BIO"}
+export SPROOT_TICK_HZ=${SPROOT_TICK_HZ:-1}
+export SPROOT_TICKS=${SPROOT_TICKS:-60}
+export SPROOT_BREATH_HZ=${SPROOT_BREATH_HZ:-0.10}
+export SPROOT_NOISE_STD=${SPROOT_NOISE_STD:-0.02}
+export SPROOT_PHIH_ESTIMATE=${SPROOT_PHIH_ESTIMATE:-0.730492}
+export SPROOT_E_TOTAL_J=${SPROOT_E_TOTAL_J:-1.0}
+export SPROOT_T_K=${SPROOT_T_K:-300.0}
+export SPROOT_DELTA_S_BASE=${SPROOT_DELTA_S_BASE:-0.001}
+export SPROOT_DELTA_S_JITTER=${SPROOT_DELTA_S_JITTER:-0.0002}
+export SPROOT_POWER_W=${SPROOT_POWER_W:-3.2}
+export SPROOT_LED_THRESHOLD_RS=${SPROOT_LED_THRESHOLD_RS:-0.80}
+export SPROOT_LED_THRESHOLD_PSI=${SPROOT_LED_THRESHOLD_PSI:-0.60}
+
+./sproot_runtime
+echo "Log written to: $SPROOT_LOG_PATH"

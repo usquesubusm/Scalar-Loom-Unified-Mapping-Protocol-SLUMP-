@@ -1,0 +1,161 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+// Covered by Honey License v1.2 first, then CC BY‑NC‑SA.
+#include <iostream>
+#include <string>
+#include <cmath> // for pow function
+
+// ==== Constants ====
+const double PHI_H = 0.7304992;                     // Coherence Constant
+const double SPEED_OF_LIGHT = 299792458.0;          // Speed of light (m/s)
+const double CHI_H = PHI_H / SPEED_OF_LIGHT;        // Field Velocity Limit Constant
+
+// ==== Helper Functions ====
+double symbolicEnergyBalance(double mass) {
+    return mass * pow(SPEED_OF_LIGHT, 2) * PHI_H * CHI_H;
+}
+
+bool exceedsFieldCoherenceLimit(double signalVelocity) {
+    return signalVelocity > CHI_H;
+}
+
+// ==== SprootWill Module ====
+class SprootWill {
+public:
+    bool shouldContinue(double signalVelocity) const {
+        return !exceedsFieldCoherenceLimit(signalVelocity);
+    }
+
+    std::string supportDirective() const {
+        return "RESEED_NEW_FUNCTION";
+    }
+};
+
+// ==== SprootBIOS Module ====
+class SprootBIOS {
+    SprootWill* willModule = nullptr;
+public:
+    void bindWillModule(SprootWill* module) {
+        willModule = module;
+    }
+
+    void startBIOSClock(int ticks) {
+        std::cout << "[BIOS] Clock started with " << ticks << " ticks.\n";
+        collapse();
+    }
+
+    void collapse() {
+        std::cout << "[BIOS] Collapse logic triggered.\n";
+    }
+};
+
+// ==== HoneyEngine Module ====
+class HoneyEngine {
+    bool warmedUp = false;
+    SprootWill* willModule = nullptr;
+public:
+    void bindWillModule(SprootWill* module) {
+        willModule = module;
+    }
+
+    void warmup() {
+        warmedUp = true;
+        std::cout << "[HoneyEngine] Warmed up.\n";
+    }
+
+    std::string process(const std::string& pulse, double signalVelocity) {
+        if (!warmedUp) {
+            std::cerr << "[Engine Error] Not warmed up.\n";
+            return "";
+        }
+
+        std::string output = pulse;
+
+        if (willModule && willModule->shouldContinue(signalVelocity)) {
+            output = willModule->supportDirective();
+        } else {
+            std::cout << "[HoneyEngine] Field velocity limit exceeded. Initiating symbolic rest.\n";
+            return "HALT_SYMBOLIC_CYCLE";
+        }
+
+        std::cout << "[HoneyEngine] Processing pulse: " << output << "\n";
+
+        if (output == "RESEED_NEW_FUNCTION") {
+            std::cout << "[HoneyEngine] Detected reseed directive. Routing to kernel.\n";
+        }
+
+        return output;
+    }
+};
+
+// ==== SprootKernel Module ====
+class SprootKernel {
+public:
+    void update(int instruction) {
+        std::cout << "[Kernel] Executing update with instruction: " << instruction << "\n";
+        collapse();
+        detectResidualField();
+        reseed();
+        scanForInstructions();
+        ThirdStateGlyph();
+        tick();
+    }
+
+    void collapse() {
+        std::cout << "[Kernel] Collapse logic activated.\n";
+    }
+
+    void detectResidualField() {
+        std::cout << "[Kernel] Detecting residual field...\n";
+    }
+
+    void reseed() {
+        std::cout << "[Kernel] Reseeding...\n";
+    }
+
+    void scanForInstructions() {
+        std::cout << "[Kernel] Scanning for instructions...\n";
+    }
+
+    void ThirdStateGlyph() {
+        std::cout << "[Kernel] Encoding Third State glyph...\n";
+    }
+
+    void tick() {
+        std::cout << "[Kernel] Tick - heartbeat cycle maintained.\n";
+    }
+};
+
+// ==== Unit Test Suite ====
+void runUnitTest(double testVelocity) {
+    SprootWill will;
+    SprootBIOS bios;
+    HoneyEngine engine;
+    SprootKernel kernel;
+
+    bios.bindWillModule(&will);
+    engine.bindWillModule(&will);
+
+    engine.warmup();
+    bios.startBIOSClock(8);
+
+    std::string result = engine.process("BREATHE", testVelocity);
+    std::cout << "[Runtime Result] " << result << std::endl;
+
+    if (result == "RESEED_NEW_FUNCTION") {
+        std::cout << "[Runtime] Initiating reseed from Engine signal...\n";
+        kernel.update(42);
+    }
+}
+
+// ==== Main Runtime ====
+int main() {
+    std::cout << "--- Running RESEED Test ---\n";
+    runUnitTest(CHI_H * 0.9);
+
+    std::cout << "\n--- Running HALT Test ---\n";
+    runUnitTest(CHI_H * 2.0);
+
+    std::cout << "\n[Runtime] Press Enter to exit...";
+    std::cin.get();
+    return 0;
+}

@@ -1,0 +1,234 @@
+//The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+//Honey License v1.2 — Symbolic Commons Operating Agreement (Updated from v1.1)
+  {
+    "Element": "Element 119",
+    "Z": 119,
+    "N_range": "172\u2013184",
+    "Inputs": {
+      "Symbolic Parameters": {
+        "Coherence Resonance Coefficient": "TBD",
+        "Shell Potential Weighting": "TBD"
+      }
+    },
+    "Predictions": {
+      "\u03a8\u209b": "TBD",
+      "Alpha Energy Window (MeV)": "TBD \u00b1 TBD",
+      "SF Branching Ratio": "TBD",
+      "Correlation Window (ms)": "TBD",
+      "Fusion Candidate Pair": "TBD",
+      "XRF Window (K\u03b1 energy)": "TBD",
+      "Chemistry Flag": "TBD",
+      "Falsifiability Markers": "TBD"
+    },
+    "Comparison References": {
+      "DNS model cross-sections": "TBD",
+      "QMC model binding/deformation": "TBD",
+      "Shell stability valley": "TBD",
+      "Bayesian uncertainty overlap": "TBD"
+    },
+    "Neutron Scenarios": [
+      "N=172",
+      "N=177",
+      "N=184"
+    ],
+    "Falsifiability Markers": "Prediction invalid if decay mode or energy window significantly deviates from expected scalar signature; e.g., SF dominance at low Z, absence of alpha decay band, or correlation window below symbolic resonance threshold."
+  },
+  {
+    "Element": "Element 120",
+    "Z": 120,
+    "N_range": "172\u2013184",
+    "Inputs": {
+      "Symbolic Parameters": {
+        "Coherence Resonance Coefficient": "TBD",
+        "Shell Potential Weighting": "TBD"
+      }
+    },
+    "Predictions": {
+      "\u03a8\u209b": "TBD",
+      "Alpha Energy Window (MeV)": "TBD \u00b1 TBD",
+      "SF Branching Ratio": "TBD",
+      "Correlation Window (ms)": "TBD",
+      "Fusion Candidate Pair": "TBD",
+      "XRF Window (K\u03b1 energy)": "TBD",
+      "Chemistry Flag": "TBD",
+      "Falsifiability Markers": "TBD"
+    },
+    "Comparison References": {
+      "DNS model cross-sections": "TBD",
+      "QMC model binding/deformation": "TBD",
+      "Shell stability valley": "TBD",
+      "Bayesian uncertainty overlap": "TBD"
+    },
+    "Neutron Scenarios": [
+      "N=172",
+      "N=177",
+      "N=184"
+    ],
+    "Falsifiability Markers": "Prediction invalid if decay mode or energy window significantly deviates from expected scalar signature; e.g., SF dominance at low Z, absence of alpha decay band, or correlation window below symbolic resonance threshold."
+  },
+  {
+    "Element": "Element 121",
+    "Z": 121,
+    "N_range": "172\u2013184",
+    "Inputs": {
+      "Symbolic Parameters": {
+        "Coherence Resonance Coefficient": "TBD",
+        "Shell Potential Weighting": "TBD"
+      }
+    },
+    "Predictions": {
+      "\u03a8\u209b": "TBD",
+      "Alpha Energy Window (MeV)": "TBD \u00b1 TBD",
+      "SF Branching Ratio": "TBD",
+      "Correlation Window (ms)": "TBD",
+      "Fusion Candidate Pair": "TBD",
+      "XRF Window (K\u03b1 energy)": "TBD",
+      "Chemistry Flag": "TBD",
+      "Falsifiability Markers": "TBD"
+    },
+    "Comparison References": {
+      "DNS model cross-sections": "TBD",
+      "QMC model binding/deformation": "TBD",
+      "Shell stability valley": "TBD",
+      "Bayesian uncertainty overlap": "TBD"
+    },
+    "Neutron Scenarios": [
+      "N=172",
+      "N=177",
+      "N=184"
+    ],
+    "Falsifiability Markers": "Prediction invalid if decay mode or energy window significantly deviates from expected scalar signature; e.g., SF dominance at low Z, absence of alpha decay band, or correlation window below symbolic resonance threshold."
+  },
+  {
+    "Element": "Element 122",
+    "Z": 122,
+    "N_range": "172\u2013184",
+    "Inputs": {
+      "Symbolic Parameters": {
+        "Coherence Resonance Coefficient": "TBD",
+        "Shell Potential Weighting": "TBD"
+      }
+    },
+    "Predictions": {
+      "\u03a8\u209b": "TBD",
+      "Alpha Energy Window (MeV)": "TBD \u00b1 TBD",
+      "SF Branching Ratio": "TBD",
+      "Correlation Window (ms)": "TBD",
+      "Fusion Candidate Pair": "TBD",
+      "XRF Window (K\u03b1 energy)": "TBD",
+      "Chemistry Flag": "TBD",
+      "Falsifiability Markers": "TBD"
+    },
+    "Comparison References": {
+      "DNS model cross-sections": "TBD",
+      "QMC model binding/deformation": "TBD",
+      "Shell stability valley": "TBD",
+      "Bayesian uncertainty overlap": "TBD"
+    },
+    "Neutron Scenarios": [
+      "N=172",
+      "N=177",
+      "N=184"
+    ],
+    "Falsifiability Markers": "Prediction invalid if decay mode or energy window significantly deviates from expected scalar signature; e.g., SF dominance at low Z, absence of alpha decay band, or correlation window below symbolic resonance threshold."
+  },
+  {
+    "Element": "Element 123",
+    "Z": 123,
+    "N_range": "172\u2013184",
+    "Inputs": {
+      "Symbolic Parameters": {
+        "Coherence Resonance Coefficient": "TBD",
+        "Shell Potential Weighting": "TBD"
+      }
+    },
+    "Predictions": {
+      "\u03a8\u209b": "TBD",
+      "Alpha Energy Window (MeV)": "TBD \u00b1 TBD",
+      "SF Branching Ratio": "TBD",
+      "Correlation Window (ms)": "TBD",
+      "Fusion Candidate Pair": "TBD",
+      "XRF Window (K\u03b1 energy)": "TBD",
+      "Chemistry Flag": "TBD",
+      "Falsifiability Markers": "TBD"
+    },
+    "Comparison References": {
+      "DNS model cross-sections": "TBD",
+      "QMC model binding/deformation": "TBD",
+      "Shell stability valley": "TBD",
+      "Bayesian uncertainty overlap": "TBD"
+    },
+    "Neutron Scenarios": [
+      "N=172",
+      "N=177",
+      "N=184"
+    ],
+    "Falsifiability Markers": "Prediction invalid if decay mode or energy window significantly deviates from expected scalar signature; e.g., SF dominance at low Z, absence of alpha decay band, or correlation window below symbolic resonance threshold."
+  },
+  {
+    "Element": "Element 124",
+    "Z": 124,
+    "N_range": "172\u2013184",
+    "Inputs": {
+      "Symbolic Parameters": {
+        "Coherence Resonance Coefficient": "TBD",
+        "Shell Potential Weighting": "TBD"
+      }
+    },
+    "Predictions": {
+      "\u03a8\u209b": "TBD",
+      "Alpha Energy Window (MeV)": "TBD \u00b1 TBD",
+      "SF Branching Ratio": "TBD",
+      "Correlation Window (ms)": "TBD",
+      "Fusion Candidate Pair": "TBD",
+      "XRF Window (K\u03b1 energy)": "TBD",
+      "Chemistry Flag": "TBD",
+      "Falsifiability Markers": "TBD"
+    },
+    "Comparison References": {
+      "DNS model cross-sections": "TBD",
+      "QMC model binding/deformation": "TBD",
+      "Shell stability valley": "TBD",
+      "Bayesian uncertainty overlap": "TBD"
+    },
+    "Neutron Scenarios": [
+      "N=172",
+      "N=177",
+      "N=184"
+    ],
+    "Falsifiability Markers": "Prediction invalid if decay mode or energy window significantly deviates from expected scalar signature; e.g., SF dominance at low Z, absence of alpha decay band, or correlation window below symbolic resonance threshold."
+  },
+  {
+    "Element": "Element 125",
+    "Z": 125,
+    "N_range": "172\u2013184",
+    "Inputs": {
+      "Symbolic Parameters": {
+        "Coherence Resonance Coefficient": "TBD",
+        "Shell Potential Weighting": "TBD"
+      }
+    },
+    "Predictions": {
+      "\u03a8\u209b": "TBD",
+      "Alpha Energy Window (MeV)": "TBD \u00b1 TBD",
+      "SF Branching Ratio": "TBD",
+      "Correlation Window (ms)": "TBD",
+      "Fusion Candidate Pair": "TBD",
+      "XRF Window (K\u03b1 energy)": "TBD",
+      "Chemistry Flag": "TBD",
+      "Falsifiability Markers": "TBD"
+    },
+    "Comparison References": {
+      "DNS model cross-sections": "TBD",
+      "QMC model binding/deformation": "TBD",
+      "Shell stability valley": "TBD",
+      "Bayesian uncertainty overlap": "TBD"
+    },
+    "Neutron Scenarios": [
+      "N=172",
+      "N=177",
+      "N=184"
+    ],
+    "Falsifiability Markers": "Prediction invalid if decay mode or energy window significantly deviates from expected scalar signature; e.g., SF dominance at low Z, absence of alpha decay band, or correlation window below symbolic resonance threshold."
+  }
+]

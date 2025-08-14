@@ -1,0 +1,53 @@
+// MitochondrialRhythm.cpp
+// Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+
+#include "MitochondrialRhythm.hpp"
+#include <cmath>
+#include <algorithm>
+#include <chrono>
+
+namespace sproot {
+
+MitochondrialRhythm::MitochondrialRhythm(double hz, double noiseStd)
+: breathHz_(hz), noiseStd_(noiseStd), tickHz_(1.0), phase_(0.0), pacer_(0.0),
+  rng_(static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count())),
+  n01_(0.0, 1.0) {}
+
+void MitochondrialRhythm::setRateHz(double hz) { breathHz_ = hz; }
+void MitochondrialRhythm::setNoise(double stddev) { noiseStd_ = stddev; }
+void MitochondrialRhythm::setTickHz(double tickHz) { tickHz_ = (tickHz > 0.0 ? tickHz : 1.0); }
+
+void MitochondrialRhythm::seed(uint64_t s) { rng_.seed(s); }
+
+void MitochondrialRhythm::tick() {
+  const double dt = 1.0 / (tickHz_ > 0.0 ? tickHz_ : 1.0);
+  const double twoPi = 6.2831853071795864769;
+  phase_ += twoPi * breathHz_ * dt;
+  if (phase_ >= twoPi) phase_ = std::fmod(phase_, twoPi);
+  // Map sin wave to [0,1] as pacer envelope
+  pacer_ = 0.5 * (1.0 + std::sin(phase_));
+}
+
+void MitochondrialRhythm::computeComponents(double& Cr, double& E, double& D, double& L) const {
+  // Base profiles shaped by pacer and phase; add light Gaussian noise
+  const double p = pacer_;
+  const double cphase = std::cos(phase_);
+  const double sphase = std::sin(phase_);
+
+  auto noise = [this]() { return noiseStd_ * n01_(rng_); };
+
+  // Coherence retention (Cr): higher near apex of the pacer (stable plateau)
+  Cr = clamp01(0.78 + 0.16 * cphase + noise());
+
+  // Expressive clarity (E): higher on rising edge of breath (anticipatory structure)
+  E  = clamp01(0.60 + 0.20 * sphase + noise());
+
+  // Distortion (D): small baseline + slight rise on transitions
+  D  = clamp01(0.15 + 0.07 * (1.0 - cphase) + noise());
+
+  // Loss (L): small baseline + larger when pacer is low (off-peak)
+  L  = clamp01(0.10 + 0.10 * (1.0 - p) + noise());
+}
+
+} // namespace sproot

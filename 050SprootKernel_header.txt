@@ -1,0 +1,17 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+// Covered by Honey License v1.2 first, then CC BY‑NC‑SA.
+#ifndef SPROOT_KERNEL_H
+#define SPROOT_KERNEL_H
+
+#include <string>
+#include <iostream>
+#include "SprootBIOS.h"
+
+class SprootKernel {
+public:
+    void biosTickCallback(SymbolicPhase phase);
+    std::string getSymbolicPulse(const std::string& glyph);
+    void logCycle(const std::string& data);
+};
+
+#endif

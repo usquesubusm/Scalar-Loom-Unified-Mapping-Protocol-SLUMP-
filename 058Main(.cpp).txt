@@ -1,0 +1,132 @@
+// main.cpp
+// Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+// Minimal harness that uses MitochondrialRhythm + SprootWill to compute R_s, Psi_s,
+// log CSV, and print LED gating events. No external deps.
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+
+#include "MitochondrialRhythm.hpp"
+#include "SprootWill.hpp"
+
+#include <algorithm>
+#include <chrono>
+#include <cmath>
+#include <cstdlib>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <thread>
+
+namespace {
+
+// getenv helpers
+std::string envs(const char* key, const std::string& fallback) {
+  const char* v = std::getenv(key);
+  return (v && *v) ? std::string(v) : fallback;
+}
+double envd(const char* key, double fallback) {
+  const char* v = std::getenv(key);
+  if (!v || !*v) return fallback;
+  std::stringstream ss(v);
+  double out = fallback;
+  ss >> out;
+  return out;
+}
+int envi(const char* key, int fallback) {
+  const char* v = std::getenv(key);
+  if (!v || !*v) return fallback;
+  return std::atoi(v);
+}
+
+double clamp01(double x) { return x < 0.0 ? 0.0 : (x > 1.0 ? 1.0 : x); }
+
+} // anon
+
+int main() {
+  using sproot::MitochondrialRhythm;
+  using sproot::SprootWill;
+
+  // Configuration (env with sensible defaults)
+  const std::string logPath = envs("SPROOT_LOG_PATH", "./sproot_thermo_log.csv");
+  const double tickHz       = std::max(0.1, envd("SPROOT_TICK_HZ", 1.0));
+  const int    ticksTotal   = std::max(1, envi("SPROOT_TICKS", 60));
+  const double breathHz     = std::max(0.02, envd("SPROOT_BREATH_HZ", 0.10)); // 0.1 Hz ~ 6 bpm
+  const double noiseStd     = std::max(0.0, envd("SPROOT_NOISE_STD", 0.02));
+  const double phiHat       = envd("SPROOT_PHIH_ESTIMATE", 0.730492); // estimated (not sacred)
+  const double EtotalJ      = envd("SPROOT_E_TOTAL_J", 1.0);          // energy per tick (J)
+  const double tempK        = envd("SPROOT_T_K", 300.0);              // temperature (K)
+  const double dS_base      = envd("SPROOT_DELTA_S_BASE", 1.0e-3);    // baseline entropy delta (J/K)
+  const double dS_jitter    = envd("SPROOT_DELTA_S_JITTER", 2.0e-4);  // jitter amplitude
+
+  // Setup modules
+  MitochondrialRhythm bio(breathHz, noiseStd);
+  bio.setTickHz(tickHz);
+  // optional seeding for reproducibility
+  if (const char* seedVar = std::getenv("SPROOT_RANDOM_SEED")) {
+    bio.seed(static_cast<uint64_t>(std::strtoull(seedVar, nullptr, 10)));
+  }
+
+  SprootWill will; // reads LED thresholds from env on construction
+
+  // Open CSV log
+  std::ofstream csv(logPath, std::ios::out | std::ios::trunc);
+  if (!csv) {
+    std::cerr << "ERROR: cannot open log path: " << logPath << std::endl;
+    return 1;
+  }
+  csv << "tick,mode,Cr,E,D,L,R_s,Psi_s,E_total_J,T_K,DeltaS_J_perK,G_J,power_W\n";
+  csv.flush();
+
+  const double eps = 1e-12;
+  const std::string mode = envs("SPROOT_MODE", "BIO"); // "SYM" or "BIO"
+  const double powerW = envd("SPROOT_POWER_W", 3.2);
+
+  // Simple time base
+  const auto tickDur = std::chrono::duration<double>(1.0 / tickHz);
+
+  for (int t = 1; t <= ticksTotal; ++t) {
+    // Advance biological pacer
+    bio.tick();
+
+    // Compute (Cr, E, D, L)
+    double Cr = 0.0, E = 0.0, D = 0.0, L = 0.0;
+    bio.computeComponents(Cr, E, D, L);
+
+    // R_s
+    const double denom = std::max(D + L, eps);
+    const double R_s   = (Cr * E) / denom;
+
+    // Energy/entropy terms
+    // Allow a small sinusoidal jitter on ΔS to simulate thermal variation
+    const double dS = dS_base + dS_jitter * std::sin(0.25 * t);
+    const double G  = EtotalJ - tempK * dS;
+
+    // Psi_s (may be negative if G < 0; diagnostic of coherence debt)
+    const double Psi_s = phiHat * R_s * (G / std::max(EtotalJ, eps));
+
+    // Log row
+    csv << std::setfill('0') << std::setw(4) << t << ","
+        << mode << ","
+        << std::fixed << std::setprecision(3)
+        << Cr << "," << E << "," << D << "," << L << ","
+        << R_s << ","
+        << Psi_s << ","
+        << EtotalJ << ","
+        << tempK << ","
+        << dS << ","
+        << G << ","
+        << powerW
+        << "\n";
+    csv.flush();
+
+    // Will-gating → simulated LED print
+    will.evaluate(R_s, Psi_s);
+
+    // Sleep until next tick (skip if SPROOT_TICK_HZ very high)
+    if (tickHz <= 200.0) std::this_thread::sleep_for(tickDur);
+  }
+
+  std::cout << "Run complete. Log written to: " << logPath << std::endl;
+  return 0;
+}

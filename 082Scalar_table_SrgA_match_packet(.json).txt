@@ -1,0 +1,110 @@
+//The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+//Honey License v1.2 — Symbolic Commons Operating Agreement (Updated from v1.1)
+
+  "Scalar_Table_Updated": {
+    "180": {
+      "Element": "E180",
+      "ScalarPhaseDensity": 2414.953415699773,
+      "Rs": 6.200717576595285,
+      "Psi_s": 3.988415783595524,
+      "CoherenceTip": false,
+      "ImplosionVector": null
+    },
+    "181": {
+      "Element": "E181",
+      "ScalarPhaseDensity": 2435.1059525203414,
+      "Rs": 6.230561882551626,
+      "Psi_s": 3.8216653959175835,
+      "CoherenceTip": false,
+      "ImplosionVector": null
+    },
+    "182": {
+      "Element": "E182",
+      "ScalarPhaseDensity": 2455.3142365082317,
+      "Rs": 6.260339990420144,
+      "Psi_s": 3.6535094370223904,
+      "CoherenceTip": false,
+      "ImplosionVector": null
+    },
+    "183": {
+      "Element": "E183",
+      "ScalarPhaseDensity": 2475.578114299769,
+      "Rs": 6.290052201290668,
+      "Psi_s": 3.483958007330873,
+      "CoherenceTip": false,
+      "ImplosionVector": null
+    },
+    "184": {
+      "Element": "E184",
+      "ScalarPhaseDensity": 2495.8974337900986,
+      "Rs": 6.319698815265847,
+      "Psi_s": 3.313021115282733,
+      "CoherenceTip": false,
+      "ImplosionVector": null
+    },
+    "185": {
+      "Element": "E185",
+      "ScalarPhaseDensity": 2516.272044116057,
+      "Rs": 6.34928013143498,
+      "Psi_s": 3.140708678177598,
+      "CoherenceTip": false,
+      "ImplosionVector": null
+    },
+    "186": {
+      "Element": "E186",
+      "ScalarPhaseDensity": 2536.7017956393693,
+      "Rs": 6.378796447849205,
+      "Psi_s": 2.9670305230136615,
+      "CoherenceTip": false,
+      "ImplosionVector": null
+    },
+    "187": {
+      "Element": "E187",
+      "ScalarPhaseDensity": 2557.1865399301632,
+      "Rs": 6.408248061497993,
+      "Psi_s": 2.7919963873235454,
+      "CoherenceTip": false,
+      "ImplosionVector": null
+    },
+    "188": {
+      "Element": "E188",
+      "ScalarPhaseDensity": 2577.7261297507926,
+      "Rs": 6.4376352682868925,
+      "Psi_s": 2.615615920007073,
+      "CoherenceTip": false,
+      "ImplosionVector": null
+    },
+    "189": {
+      "Element": "E189",
+      "ScalarPhaseDensity": 2598.3204190399615,
+      "Rs": 6.46695836301649,
+      "Psi_s": 2.4378986821607076,
+      "CoherenceTip": false,
+      "ImplosionVector": null
+    },
+    "190": {
+      "Element": "E190",
+      "ScalarPhaseDensity": 2618.969262897142,
+      "Rs": 6.49621763936251,
+      "Psi_s": 2.258854147903478,
+      "CoherenceTip": false,
+      "ImplosionVector": null
+    },
+    "191": {
+      "Element": "E191",
+      "ScalarPhaseDensity": 2639.672517567283,
+      "Rs": 6.525413389857055,
+      "Psi_s": 2.078491705198991,
+      "CoherenceTip": true,
+      "ImplosionVector": "IV-191"
+    }
+  },
+  "Observation_Correspondence": {
+    "object": "Sgr A*",
+    "observed_MIR_pattern": "Asymmetric coherent ring",
+    "predicted_phase_emission": "Scalar tip pulse at curvature max",
+    "matched": true,
+    "confidence": 0.92
+  },
+  "Source": "Unified Scalar Model v1.2"
+}

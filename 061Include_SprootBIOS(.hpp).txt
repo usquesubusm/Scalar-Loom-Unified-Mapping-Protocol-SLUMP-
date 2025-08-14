@@ -1,0 +1,30 @@
+// SprootBIOS.hpp
+// Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+#pragma once
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+#include <chrono>
+
+namespace sproot {
+
+class SprootBIOS {
+public:
+  explicit SprootBIOS(double tickHz = 1.0)
+    : tickHz_(tickHz > 0.0 ? tickHz : 1.0),
+      tickDur_(std::chrono::duration<double>(1.0 / (tickHz_))) {}
+
+  void setTickHz(double hz) {
+    tickHz_ = (hz > 0.0 ? hz : 1.0);
+    tickDur_ = std::chrono::duration<double>(1.0 / tickHz_);
+  }
+
+  // Sleep for one tick (utility)
+  void waitTick() const { std::this_thread::sleep_for(tickDur_); }
+
+  double tickHz() const { return tickHz_; }
+
+private:
+  double tickHz_;
+  std::chrono::duration<double> tickDur_;
+};
+
+} // namespace sproot

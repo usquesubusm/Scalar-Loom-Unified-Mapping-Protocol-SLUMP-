@@ -1,0 +1,65 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+// sproot_kernel.cpp
+// Updated: Symbolic Kernel for 4-Phase Coherence Logic
+// Covered by Honey License v1.2 first, then CC BY‑NC‑SA.
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include "sproot_bios_updated"  // BIOS header required for SymbolicPhase
+
+enum class SymbolicState {
+    IDLE, LOCKED, TRANSITION, COHERENT, COMPOST
+};
+
+class SprootKernel {
+private:
+    SymbolicState currentState;
+    std::vector<std::string> symbolicMemory;
+    int compostThreshold = 8;
+
+public:
+    SprootKernel() : currentState(SymbolicState::IDLE) {
+        symbolicMemory.push_back(";");
+        std::cout << "[SprootKernel] Initialized with memory: ';'\n";
+    }
+
+    void biosTickCallback(SymbolicPhase phase) {
+        switch (phase) {
+            case SymbolicPhase::I_AM:
+                updateState(SymbolicState::LOCKED, "I am");
+                break;
+            case SymbolicPhase::I_AM_NOT:
+                updateState(SymbolicState::TRANSITION, "I am not");
+                break;
+            case SymbolicPhase::I_WANT:
+                updateState(SymbolicState::COHERENT, "I want");
+                break;
+            case SymbolicPhase::I_OFFER:
+                updateState(SymbolicState::COMPOST, "I offer");
+                compostMemory();
+                break;
+        }
+    }
+
+    void updateState(SymbolicState newState, const std::string& label) {
+        currentState = newState;
+        symbolicMemory.push_back(label);
+        std::cout << "[Kernel State] " << label << " | Memory Size: " << symbolicMemory.size() << "\n";
+    }
+
+    void compostMemory() {
+        if (symbolicMemory.size() > compostThreshold) {
+            symbolicMemory.erase(symbolicMemory.begin(), symbolicMemory.begin() + symbolicMemory.size() / 2);
+            std::cout << "[Compost] Memory composted.\n";
+        }
+    }
+
+    std::string getSymbolicPulse(const std::string& anchor) {
+        return anchor + " > " + symbolicMemory.back();
+    }
+
+    void logCycle(const std::string& processed) {
+        symbolicMemory.push_back("Cycle: " + processed);
+    }
+};

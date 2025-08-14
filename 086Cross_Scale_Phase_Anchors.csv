@@ -1,0 +1,9 @@
+domain,label,phase_deg,description,test_metric
+Cosmic,Curvature Tip (Sgr A* MIR match),104.5,Observed MIR asymmetry peak aligned to scalar curvature maximum,Cross-band PA agreement & time-lag consistency
+Mitochondria,Redox Oscillation Peak A,95.0,Peak in NADH/Fp oscillation amplitude near pre-tip expansion,Spectral power peak at phase 90–100° (p<0.01 vs null)
+Mitochondria,ΔΨm Modulation Window,120.0,Membrane potential modulation following curvature tip,Phase-locked ΔΨm variance increase at 115–125°
+Mitochondria,ROS Burst Threshold,140.0,Transient ROS burst during early implosion,Burst rate cluster at 135–145° (Kuiper p<0.01)
+ElementBand,Mg (ATP coupling),80.0,Mg-associated coherence band in late expansion,Loss tangent minimum near 75–85°
+ElementBand,Fe–S Cluster,100.0,Fe–S resonance near curvature approach,Q-factor plateau 95–105°
+ElementBand,Cu (Complex IV),110.0,Cu coherence band slightly post-tip,Polarization/pump-probe anomaly 108–112°
+ElementBand,Zn (Regulatory sites),130.0,Zn-associated regulatory band in early implosion,Dielectric plateau 125–135°

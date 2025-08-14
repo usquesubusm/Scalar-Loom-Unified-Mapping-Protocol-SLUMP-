@@ -1,0 +1,15 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+//# Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+
+#!/usr/bin/env python3
+# Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+import csv, sys
+path = sys.argv[1] if len(sys.argv) > 1 else "sproot_thermo_log.csv"
+with open(path, newline="") as f:
+    reader = csv.DictReader(f)
+    fields = reader.fieldnames or []
+need = ["tick","mode","Cr","E","D","L","R_s","Psi_s","E_total_J","T_K","DeltaS_J_perK","G_J","power_W"]
+missing = [c for c in need if c not in fields]
+if missing:
+    print("MISSING COLUMNS:", ",".join(missing)); raise SystemExit(1)
+print("CSV schema OK.")

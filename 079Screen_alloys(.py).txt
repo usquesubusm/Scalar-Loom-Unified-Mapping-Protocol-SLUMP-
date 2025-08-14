@@ -1,0 +1,14 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+//License: Honey License v1.2 — Symbolic Commons Operating Agreement
+//Compatibility: CC BY-NC-SA 4.0 (mirrored)
+
+#!/usr/bin/env python3
+import argparse, pandas as pd
+ap = argparse.ArgumentParser()
+ap.add_argument('--csv', required=True)
+ap.add_argument('--novel', action='store_true')
+args = ap.parse_args()
+df = pd.read_csv(args.csv)
+if args.novel:
+    df = df[df['NovelFlag']==True]
+print(df[['Alloy','Architecture','NovelFlag','Route']].to_string(index=False))

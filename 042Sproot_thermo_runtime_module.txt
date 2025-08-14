@@ -1,0 +1,81 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+// SprootThermo.cpp — Hybrid Symbolic Thermodynamic Runtime Module
+// Part of the Honey Lens + Sproot Runtime Suite
+// Covered by Honey License v1.2 first, then CC BY‑NC‑SA.
+
+#include <cmath>
+#include <iostream>
+#include <string>
+
+const double phi_h = 0.730492; // Scalar Coherence Constant
+const double epsilon = 1e-9;   // Precision buffer for zero division
+
+// Toggle for hybrid runtime modes
+enum ThermoMode { SYMBOLIC, BIOLOGICAL };
+ThermoMode currentMode = SYMBOLIC; // Default mode
+
+// Runtime state variables
+struct SymbolicThermoState {
+    double Cr;        // Coherence retention per cycle
+    double E;         // Expressive clarity (semantic density)
+    double D;         // Distortion (noise)
+    double L;         // Loss (entropy, information, or signal drift)
+    double E_total;   // Total energy input (joules or symbolic units)
+    double T;         // Temperature (Kelvin or normalized runtime unit)
+    double deltaS;    // Entropy change
+};
+
+// Compute R_s (Recursive Symbolic Coherence Ratio)
+double compute_Rs(const SymbolicThermoState& state) {
+    return (state.Cr * state.E) / (state.D + state.L + epsilon);
+}
+
+// Compute Ψ_s (Symbolic Thermodynamic Coherence Potential)
+double compute_Psi_s(const SymbolicThermoState& state) {
+    double Rs = compute_Rs(state);
+    return (phi_h * Rs * state.E_total) / (state.T * state.deltaS + epsilon);
+}
+
+// Example placeholder biological input (can be connected to live sensor)
+SymbolicThermoState getBiologicalState() {
+    return {
+        0.92,  // Cr: near-perfect coherence with breath pacing
+        0.88,  // E: clean, meaningful vocal signal
+        0.05,  // D: minor external interference
+        0.03,  // L: low signal loss
+        310.0, // E_total: approx. body heat energy in J
+        310.0, // T: 310 K (human body temperature)
+        0.012  // deltaS: estimated entropy delta
+    };
+}
+
+// Example symbolic runtime state
+SymbolicThermoState getSymbolicState() {
+    return {
+        0.85,   // Cr: coherence retention from tick-to-tick
+        0.93,   // E: expressive clarity in symbolic inference
+        0.07,   // D: phase mismatch from external noise
+        0.05,   // L: symbolic dropout or memory loss
+        1.0,    // E_total: normalized symbolic energy unit
+        1.0,    // T: symbolic temp scale
+        0.01    // deltaS: symbolic entropy shift
+    };
+}
+
+void updateAndReportThermoState() {
+    SymbolicThermoState state =
+        (currentMode == BIOLOGICAL) ? getBiologicalState() : getSymbolicState();
+
+    double Rs = compute_Rs(state);
+    double Psi_s = compute_Psi_s(state);
+
+    std::string modeStr = (currentMode == BIOLOGICAL) ? "BIO" : "SYM";
+    std::cout << "[" << modeStr << "] R_s = " << Rs << ", Ψ_s = " << Psi_s << std::endl;
+}
+
+// Example driver
+int main() {
+    std::cout << "--- SprootThermo: Symbolic Thermodynamics Runtime Module ---\n";
+    updateAndReportThermoState();
+    return 0;
+}

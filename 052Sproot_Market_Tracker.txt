@@ -1,0 +1,142 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+// Covered by Honey License v1.2 first, then CC BY‑NC‑SA.
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <iomanip>
+#include <ctime>
+#include <filesystem>
+#include "json.hpp"
+
+using json = nlohmann::json;
+namespace fs = std::filesystem;
+
+struct Entry {
+    std::string symbol;
+    double last_price;
+    double daily_change;
+    double percent_change;
+    double cost_basis;
+    double quantity;
+    double current_value;
+    double total_gain_loss;
+    double percent_gain_loss;
+    std::string symbolic_phase;
+};
+void print_summary(const std::vector<Entry>& entries, const std::string& date) {
+    if (entries.empty()) {
+        std::cout << "\nNo entries recorded.\n";
+        return;
+    }
+
+    std::cout << "\n=== Session Summary (" << date << ") ===\n";
+    std::cout << std::left
+        << std::setw(8) << "SYMBOL"
+        << std::right
+        << std::setw(10) << "LAST"
+        << std::setw(8) << "?$"
+        << std::setw(8) << "?%"
+        << std::setw(10) << "VALUE"
+        << std::setw(10) << "P/L$"
+        << std::setw(8) << "P/L%"
+        << "   PHASE"
+        << "\n";
+
+    for (const auto& e : entries) {
+        std::cout << std::left
+            << std::setw(8) << e.symbol
+            << std::right << std::fixed << std::setprecision(2)
+            << std::setw(10) << e.last_price
+            << std::setw(8) << e.daily_change
+            << std::setw(8) << e.percent_change
+            << std::setw(10) << e.current_value
+            << std::setw(10) << e.total_gain_loss
+            << std::setw(8) << e.percent_gain_loss
+            << "   " << e.symbolic_phase
+            << "\n";
+    }
+}
+
+std::string get_today_date() {
+    std::time_t t = std::time(nullptr);
+    std::tm tm{};                    // zero-init
+    localtime_s(&tm, &t);            // secure version on MSVC
+    char buffer[11];
+    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d", &tm);
+    return std::string(buffer);
+}
+
+
+std::string get_symbolic_phase(double percent_change) {
+    if (percent_change > 1.5)
+        return "Inhale (rising momentum)";
+    else if (percent_change < -1.5)
+        return "Exhale (falling momentum)";
+    else
+        return "Pause (transition/consolidation)";
+}
+
+int main() {
+    std::vector<Entry> entries;
+    std::string symbol;
+
+    std::cout << "=== Symbolic Market Tracker (C++ Runtime) ===\n";
+
+    while (true) {
+        std::cout << "Symbol (or 'done'): ";
+        std::cin >> symbol;
+        if (symbol == "done" || symbol == "DONE") break;
+
+        Entry e;
+        e.symbol = symbol;
+        std::cout << "  Last Price: ";
+        std::cin >> e.last_price;
+        std::cout << "  Daily Change ($): ";
+        std::cin >> e.daily_change;
+        std::cout << "  Percent Change (%): ";
+        std::cin >> e.percent_change;
+        std::cout << "  Cost Basis: ";
+        std::cin >> e.cost_basis;
+        std::cout << "  Quantity Held: ";
+        std::cin >> e.quantity;
+
+        e.current_value = e.last_price * e.quantity;
+        e.total_gain_loss = e.current_value - (e.cost_basis * e.quantity);
+        e.percent_gain_loss = (e.total_gain_loss / (e.cost_basis * e.quantity)) * 100.0;
+        e.symbolic_phase = get_symbolic_phase(e.percent_change);
+
+        entries.push_back(e);
+    }
+    std::string today = get_today_date();
+    print_summary(entries, today);
+
+    json log;
+    log["date"] = get_today_date();
+    log["entries"] = json::array();
+
+    for (const auto& e : entries) {
+        json entry = {
+            {"symbol", e.symbol},
+            {"last_price", e.last_price},
+            {"daily_change", e.daily_change},
+            {"percent_change", e.percent_change},
+            {"cost_basis", e.cost_basis},
+            {"quantity", e.quantity},
+            {"current_value", e.current_value},
+            {"total_gain_loss", e.total_gain_loss},
+            {"percent_gain_loss", e.percent_gain_loss},
+            {"symbolic_phase", e.symbolic_phase}
+        };
+        log["entries"].push_back(entry);
+    }
+
+    fs::create_directories("symbolic_logs");
+    std::string filename = "symbolic_logs/" + get_today_date() + ".json";
+    std::ofstream file(filename);
+    file << std::setw(2) << log << std::endl;
+    file.close();
+
+    std::cout << "Tracking data saved to " << filename << std::endl;
+    return 0;
+}

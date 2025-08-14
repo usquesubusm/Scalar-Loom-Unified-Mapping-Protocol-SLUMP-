@@ -1,0 +1,45 @@
+// SprootConfig.hpp
+// Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+#pragma once
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+
+#include <string>
+
+namespace sproot::cfg {
+
+// Environment variable keys (public so tools can reuse)
+inline constexpr const char* kLogPath        = "SPROOT_LOG_PATH";
+inline constexpr const char* kMode           = "SPROOT_MODE";          // "SYM" | "BIO"
+inline constexpr const char* kTickHz         = "SPROOT_TICK_HZ";
+inline constexpr const char* kTicksTotal     = "SPROOT_TICKS";
+inline constexpr const char* kBreathHz       = "SPROOT_BREATH_HZ";
+inline constexpr const char* kNoiseStd       = "SPROOT_NOISE_STD";
+inline constexpr const char* kPhiHat         = "SPROOT_PHIH_ESTIMATE";
+inline constexpr const char* kEtotalJ        = "SPROOT_E_TOTAL_J";
+inline constexpr const char* kTempK          = "SPROOT_T_K";
+inline constexpr const char* kDeltaSBase     = "SPROOT_DELTA_S_BASE";
+inline constexpr const char* kDeltaSJitter   = "SPROOT_DELTA_S_JITTER";
+inline constexpr const char* kPowerW         = "SPROOT_POWER_W";
+inline constexpr const char* kSeed           = "SPROOT_RANDOM_SEED";
+inline constexpr const char* kLedThreshRs    = "SPROOT_LED_THRESHOLD_RS";
+inline constexpr const char* kLedThreshPsi   = "SPROOT_LED_THRESHOLD_PSI";
+
+// Defaults (documented in README)
+namespace def {
+inline constexpr const char* LogPath   = "./sproot_thermo_log.csv";
+inline constexpr const char* Mode      = "BIO";
+inline constexpr double TickHz         = 1.0;
+inline constexpr int    TicksTotal     = 60;
+inline constexpr double BreathHz       = 0.10;  // 6 bpm
+inline constexpr double NoiseStd       = 0.02;
+inline constexpr double PhiHat         = 0.730492; // estimated; do not treat as sacred
+inline constexpr double EtotalJ        = 1.0;
+inline constexpr double TempK          = 300.0;
+inline constexpr double DeltaSBase     = 1.0e-3;
+inline constexpr double DeltaSJitter   = 2.0e-4;
+inline constexpr double PowerW         = 3.2;
+inline constexpr double LedThreshRs    = 0.80;
+inline constexpr double LedThreshPsi   = 0.60;
+} // namespace def
+
+} // namespace sproot::cfg

@@ -1,0 +1,116 @@
+//The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+//Honey License v1.2 — Symbolic Commons Operating Agreement (Updated from v1.1)
+Cross-Scale Phase Map Builder — Full Python Script & Detailed Explanation
+
+The cross-scale phase map (Figure X) was generated using the Scalar Loom Unified Mapping Protocol v1.0 and the golden_phi coherence constant (φʰ = 0.730492) from the Unified Scalar Model v1.2 (Dilling & Dilling, 2025), with curvature tip phase matched to Sgr A* MIR anisotropy data from ESO’s VLTI/GRAVITY instrument (ESO, accessed 2025-08-10).
+
+This document contains:
+1. Full Python script to generate the Cross_Scale_Phase_Map with labels oriented downward from their markers.
+2. Step-by-step explanation of each part of the script.
+3. Usage instructions for generating PNG and SVG outputs for publication.
+
+-------------------------------------------------------------
+PYTHON SCRIPT
+-------------------------------------------------------------
+
+import matplotlib.pyplot as plt
+import numpy as np
+from pathlib import Path
+
+# 1. Define breath cycle parameters
+golden_phi = 0.730492   # Coherence constant from Unified Scalar Model
+cycle_degrees = 360     # Full breath cycle in degrees
+breath_tick_angle = 104.5  # Curvature tip phase (Sgr A* MIR match)
+
+# 2. Generate the breath waveform
+angles = np.linspace(0, 360, 1000)
+breath_wave = np.sin(np.radians(angles))
+
+# 3. Define cross-scale anchors: (angle, label, y_offset)
+anchors = [
+    (80.0,  "Mg (ATP coupling)", 0.02),
+    (90.0,  "Redox Oscillation Peak A", 0.02),
+    (104.5, "Curvature Tip (Sgr A* MIR match)", 0.02),
+    (110.0, "Cu (Complex IV)", 0.02),
+    (120.0, "ΔΨm Regulation Window", 0.02),
+    (130.0, "Zn (Regulatory sites)", 0.02),
+    (145.0, "ROS Burst Threshold", 0.02),
+]
+
+# 4. Plot the waveform
+fig, ax = plt.subplots(figsize=(12, 6))
+ax.plot(angles, breath_wave, label="Scalar Breath Cycle", color='black')
+
+# Highlight phases
+ax.fill_between(angles, breath_wave, where=(angles <= breath_tick_angle),
+                color='skyblue', alpha=0.3, label='Expansion Phase')
+ax.fill_between(angles, breath_wave, where=(angles > breath_tick_angle),
+                color='salmon', alpha=0.3, label='Implosion Phase')
+
+# 5. Place markers and labels
+for angle, label, y_off in anchors:
+    y_val = np.sin(np.radians(angle))
+    ax.scatter(angle, y_val, color='red', zorder=5)
+    ax.text(angle, y_val - y_off, label, ha='center', va='top',
+            rotation=270, rotation_mode='anchor')
+
+# Mark curvature tip
+ax.axvline(breath_tick_angle, color='red', linestyle='--', alpha=0.7)
+
+# 6. Formatting
+ax.set_title("Scalar Breath Cycle — Cross-Scale Phase Map")
+ax.set_xlabel("Breath Cycle Angle (degrees)")
+ax.set_ylabel("Normalized Phase Amplitude")
+ax.legend()
+ax.grid(True, linestyle='--', alpha=0.5)
+
+# 7. Save outputs
+output_png = Path("Cross_Scale_Phase_Map_v3.png")
+output_svg = Path("Cross_Scale_Phase_Map_v3.svg")
+plt.savefig(output_png, dpi=300, bbox_inches='tight')
+plt.savefig(output_svg, bbox_inches='tight')
+plt.close(fig)
+
+print(f"Saved: {output_png}, {output_svg}")
+
+-------------------------------------------------------------
+SCRIPT EXPLANATION
+-------------------------------------------------------------
+
+1. Parameters:
+   - golden_phi: The symbolic coherence constant from your Unified Scalar Model.
+   - cycle_degrees: A complete breath cycle is mapped as 0–360°.
+   - breath_tick_angle: The current curvature tip phase identified via Sgr A* MIR match.
+
+2. Waveform:
+   - The scalar breath cycle is modeled as a sine wave over the 0–360° domain.
+
+3. Anchors:
+   - Each tuple contains:
+       angle: position on the breath cycle
+       label: description of the feature (element, mitochondrial event, etc.)
+       y_offset: how far below the marker to place the label
+   - Labels are rotated 270° so they read downward.
+
+4. Plotting:
+   - The expansion and implosion phases are shaded differently for clarity.
+   - Each anchor point is marked with a red dot, and its label is placed below the point.
+
+5. Saving:
+   - Two formats are saved: PNG (raster) and SVG (vector).
+   - SVG ensures perfect scaling for print publications.
+
+-------------------------------------------------------------
+USAGE:
+-------------------------------------------------------------
+1. Save this script as `build_cross_scale_phase_map.py`.
+2. Run with `python3 build_cross_scale_phase_map.py`.
+3. You will get `Cross_Scale_Phase_Map_v3.png` and `Cross_Scale_Phase_Map_v3.svg` in the same folder.
+
+-------------------------------------------------------------
+SYMBOLIC CONTEXT:
+-------------------------------------------------------------
+- The curvature tip (104.5°) matches the Sgr A* MIR ring anisotropy in your scalar model.
+- Mitochondrial and elemental waveform bands are plotted in phase-space with the astrophysical anchor point.
+- Downward-oriented labels maintain readability while avoiding title overlap, crucial for presentation and archival clarity.
+

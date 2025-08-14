@@ -1,0 +1,21 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+// Covered by Honey License v1.2 first, then CC BY‑NC‑SA.
+#ifndef HONEY_ENGINE_H
+#define HONEY_ENGINE_H
+
+#include <string>
+#include <iostream>
+
+class SprootWill;
+
+class HoneyEngine {
+    bool warmedUp = false;
+    SprootWill* willModule = nullptr;
+public:
+    void bindWillModule(SprootWill* module);
+    void warmup();
+    std::string process(const std::string& pulse);
+    void vocalize(const std::string& phrase);
+};
+
+#endif

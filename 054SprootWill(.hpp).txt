@@ -1,0 +1,37 @@
+// SprootWill.hpp
+// Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+// Will-gating: gates coherence based on R_s and Psi_s thresholds; optional LED simulation.
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+
+#pragma once
+#include <cstdlib>
+#include <string>
+
+namespace sproot {
+
+class SprootWill {
+public:
+  SprootWill();
+
+  // Set thresholds directly
+  void setThresholds(double rs, double psi);
+
+  // Read thresholds from environment variables (if present)
+  // SPROOT_LED_THRESHOLD_RS (default 0.80), SPROOT_LED_THRESHOLD_PSI (default 0.60)
+  void readEnv();
+
+  // Evaluate current coherence; returns true if "LED ON" condition is met
+  bool evaluate(double R_s, double Psi_s);
+
+  // Accessors
+  double thresholdRs() const { return rsThresh_; }
+  double thresholdPsi() const { return psiThresh_; }
+  bool ledState() const { return ledOn_; }
+
+private:
+  double rsThresh_;
+  double psiThresh_;
+  bool ledOn_;
+};
+
+} // namespace sproot

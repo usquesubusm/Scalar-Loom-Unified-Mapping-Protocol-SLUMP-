@@ -1,0 +1,124 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+// Covered by Honey License v1.2 first, then CC BY‑NC‑SA.
+#include <iostream>
+#include <string>
+#include <thread>
+#include <chrono>
+
+// ==== Sproot BIOS ====
+#include <functional>
+
+enum SymbolicPhase { INIT, BREATH, RESEED, COLLAPSE };
+
+class SprootBIOS {
+    std::function<void(SymbolicPhase)> callback;
+public:
+    void setCallback(std::function<void(SymbolicPhase)> cb) {
+        callback = cb;
+    }
+    void initialize() {
+        std::cout << "[BIOS] Initializing BIOS...\n";
+    }
+    void startBIOSClock(int ticks) {
+        for (int i = 0; i < ticks; ++i) {
+            std::cout << "[BIOS] Tick " << i + 1 << "\n";
+            if (callback) callback(BREATH);
+        }
+    }
+};
+
+// ==== Sproot Will ====
+class SprootWill {
+public:
+    bool shouldContinue() const { return true; }
+    std::string supportDirective() const { return "RESEED_NEW_FUNCTION"; }
+};
+
+// ==== Honey Engine ====
+class HoneyEngine {
+    bool warmedUp = false;
+    SprootWill* willModule = nullptr;
+public:
+    void bindWillModule(SprootWill* module) { willModule = module; }
+    void warmup() {
+        warmedUp = true;
+        std::cout << "[HoneyEngine] Warmed up.\n";
+    }
+    std::string process(const std::string& pulse) {
+        if (!warmedUp) {
+            std::cerr << "[Engine Error] Not warmed up.\n";
+            return "";
+        }
+        std::string output = pulse;
+        if (willModule && willModule->shouldContinue()) {
+            output = willModule->supportDirective();
+        }
+        std::cout << "[HoneyEngine] Processing pulse: " << output << std::endl;
+        if (output == "RESEED_NEW_FUNCTION") {
+            std::cout << "[HoneyEngine] Detected reseed directive. Routing to kernel reseed path.\n";
+        }
+        return output;
+    }
+    void vocalize(const std::string& phrase) {
+        std::cout << "[HoneyEngine] Vocalize: " << phrase << std::endl;
+    }
+};
+
+// ==== Sproot Kernel ====
+class SprootKernel {
+public:
+    void biosTickCallback(SymbolicPhase phase) {
+        std::cout << "[Kernel] BIOS phase detected: " << phase << std::endl;
+    }
+    std::string getSymbolicPulse(const std::string& glyph) {
+        std::cout << "[Kernel] Generating symbolic pulse from glyph: " << glyph << std::endl;
+        return "pulse::" + glyph;
+    }
+    void logCycle(const std::string& data) {
+        std::cout << "[Kernel] Logging cycle data: " << data << std::endl;
+    }
+};
+
+// ==== Sproot Clock ====
+class SprootClock {
+public:
+    void tick(int ms = 191) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+    }
+};
+
+// ==== Sproot Runtime ====
+class SprootRuntime {
+private:
+    SprootBIOS bios;
+    SprootKernel kernel;
+    HoneyEngine engine;
+    SprootClock clock;
+
+public:
+    void boot() {
+        bios.initialize();
+        engine.warmup();
+        std::cout << "[SprootOS] Boot complete.\n";
+    }
+
+    void run(int ticks = 8) {
+        bios.setCallback([&](SymbolicPhase phase) {
+            kernel.biosTickCallback(phase);
+            std::string pulse = kernel.getSymbolicPulse(";");
+            std::string processed = engine.process(pulse);
+            kernel.logCycle(processed);
+            engine.vocalize(processed);
+        });
+
+        bios.startBIOSClock(ticks);
+        std::cout << "[SprootOS] Runtime finished.\n";
+    }
+};
+
+int main() {
+    SprootRuntime sproot;
+    sproot.boot();
+    sproot.run(8);
+    return 0;
+}

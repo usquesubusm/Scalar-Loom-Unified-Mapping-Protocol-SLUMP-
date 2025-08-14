@@ -1,0 +1,17 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+//# Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+
+#!/usr/bin/env bash
+set -euo pipefail
+# Create a tarball suitable for Zenodo, excluding build artifacts.
+
+OUT=${1:-"sproot_runtime_zenodo.tar.gz"}
+
+tar --exclude-vcs \
+    --exclude='*.o' \
+    --exclude='*.exe' \
+    --exclude='build' \
+    -czf "$OUT" \
+    README.txt LICENSES include src scripts tests
+
+echo "Created: $OUT"

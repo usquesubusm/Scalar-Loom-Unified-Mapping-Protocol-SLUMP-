@@ -1,0 +1,148 @@
+#The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+#Honey License v1.2 — Symbolic Commons Operating Agreement (Updated from v1.1)
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from pathlib import Path
+
+CSV_IN = Path(r'/mnt/data/Coherence_Energy_Benchmark_Template.csv')
+OUT1 = Path(r'/mnt/data/fig_energy_per_task.png')
+OUT2 = Path(r'/mnt/data/fig_energy_savings_pct.png')
+OUT3 = Path(r'/mnt/data/fig_co2_savings_pct.png')
+
+def coerce_num(s):
+    return pd.to_numeric(s, errors="coerce")
+
+def compute_columns(df):
+    # Coerce relevant numeric columns
+    num_cols = [
+        "Baseline_J_per_Task","Coherence_J_per_Task","PUE",
+        "Adj_Baseline_J_per_Task","Adj_Coherence_J_per_Task",
+        "Baseline_Wall_kWh","Coherence_Wall_kWh",
+        "Carbon_Intensity_gCO2_per_kWh",
+        "Baseline_gCO2_per_Task","Coherence_gCO2_per_Task",
+        "Energy_Savings_pct","CO2_Savings_pct"
+    ]
+    for c in num_cols:
+        if c in df.columns:
+            df[c] = coerce_num(df[c])
+
+    # Compute PUE-adjusted Joules if missing
+    if "Adj_Baseline_J_per_Task" in df and "Baseline_J_per_Task" in df and "PUE" in df:
+        m = df["Adj_Baseline_J_per_Task"].isna() & df["Baseline_J_per_Task"].notna() & df["PUE"].notna()
+        df.loc[m, "Adj_Baseline_J_per_Task"] = df.loc[m, "Baseline_J_per_Task"] * df.loc[m, "PUE"]
+    if "Adj_Coherence_J_per_Task" in df and "Coherence_J_per_Task" in df and "PUE" in df:
+        m = df["Adj_Coherence_J_per_Task"].isna() & df["Coherence_J_per_Task"].notna() & df["PUE"].notna()
+        df.loc[m, "Adj_Coherence_J_per_Task"] = df.loc[m, "Coherence_J_per_Task"] * df.loc[m, "PUE"]
+
+    # If J/task missing but wall kWh given, convert (assumes row represents one task)
+    kwh_to_j = 3.6e6
+    if "Baseline_J_per_Task" in df and "Baseline_Wall_kWh" in df:
+        m = df["Baseline_J_per_Task"].isna() & df["Baseline_Wall_kWh"].notna()
+        df.loc[m, "Baseline_J_per_Task"] = df.loc[m, "Baseline_Wall_kWh"] * kwh_to_j
+    if "Coherence_J_per_Task" in df and "Coherence_Wall_kWh" in df:
+        m = df["Coherence_J_per_Task"].isna() & df["Coherence_Wall_kWh"].notna()
+        df.loc[m, "Coherence_J_per_Task"] = df.loc[m, "Coherence_Wall_kWh"] * kwh_to_j
+
+    # If CO2 per task not provided, compute from adjusted Joules and grid factor
+    if "Carbon_Intensity_gCO2_per_kWh" in df:
+        j_to_kwh = 1.0/3.6e6
+        if "Baseline_gCO2_per_Task" in df and "Adj_Baseline_J_per_Task" in df:
+            m = df["Baseline_gCO2_per_Task"].isna() & df["Adj_Baseline_J_per_Task"].notna() & df["Carbon_Intensity_gCO2_per_kWh"].notna()
+            df.loc[m, "Baseline_gCO2_per_Task"] = df.loc[m, "Adj_Baseline_J_per_Task"] * j_to_kwh * df.loc[m, "Carbon_Intensity_gCO2_per_kWh"]
+        if "Coherence_gCO2_per_Task" in df and "Adj_Coherence_J_per_Task" in df:
+            m = df["Coherence_gCO2_per_Task"].isna() & df["Adj_Coherence_J_per_Task"].notna() & df["Carbon_Intensity_gCO2_per_kWh"].notna()
+            df.loc[m, "Coherence_gCO2_per_Task"] = df.loc[m, "Adj_Coherence_J_per_Task"] * j_to_kwh * df.loc[m, "Carbon_Intensity_gCO2_per_kWh"]
+
+    # Compute energy savings % if missing
+    if "Energy_Savings_pct" in df and "Adj_Baseline_J_per_Task" in df and "Adj_Coherence_J_per_Task" in df:
+        mask = df["Energy_Savings_pct"].isna() & df["Adj_Baseline_J_per_Task"].notna() & df["Adj_Coherence_J_per_Task"].notna() & (df["Adj_Baseline_J_per_Task"] > 0)
+        df.loc[mask, "Energy_Savings_pct"] = 100.0 * (df.loc[mask, "Adj_Baseline_J_per_Task"] - df.loc[mask, "Adj_Coherence_J_per_Task"]) / df.loc[mask, "Adj_Baseline_J_per_Task"]
+
+    # Compute CO2 savings % if missing
+    if "CO2_Savings_pct" in df and "Baseline_gCO2_per_Task" in df and "Coherence_gCO2_per_Task" in df:
+        mask = df["CO2_Savings_pct"].isna() & df["Baseline_gCO2_per_Task"].notna() & df["Coherence_gCO2_per_Task"].notna() & (df["Baseline_gCO2_per_Task"] > 0)
+        df.loc[mask, "CO2_Savings_pct"] = 100.0 * (df.loc[mask, "Baseline_gCO2_per_Task"] - df.loc[mask, "Coherence_gCO2_per_Task"]) / df.loc[mask, "Baseline_gCO2_per_Task"]
+
+    return df
+
+def main():
+    df = pd.read_csv(CSV_IN)
+    if df.empty:
+        print("No data rows found. Fill the CSV and rerun.")
+        return
+
+    # Ensure required columns exist
+    needed = [
+        "Workload_Name","Adj_Baseline_J_per_Task","Adj_Coherence_J_per_Task",
+        "Energy_Savings_pct","Baseline_gCO2_per_Task","Coherence_gCO2_per_Task","CO2_Savings_pct"
+    ]
+    for n in needed:
+        if n not in df.columns:
+            df[n] = np.nan
+
+    df = compute_columns(df)
+
+    # Aggregate by Workload_Name
+    group = df.groupby("Workload_Name", dropna=False).agg({
+        "Adj_Baseline_J_per_Task":"mean",
+        "Adj_Coherence_J_per_Task":"mean",
+        "Energy_Savings_pct":"mean",
+        "Baseline_gCO2_per_Task":"mean",
+        "Coherence_gCO2_per_Task":"mean",
+        "CO2_Savings_pct":"mean"
+    }).reset_index()
+
+    # Plot 1: Energy per task
+    gE = group.dropna(subset=["Adj_Baseline_J_per_Task","Adj_Coherence_J_per_Task"], how="any")
+    if not gE.empty:
+        plt.figure(figsize=(10,6))
+        x = np.arange(len(gE))
+        width = 0.35
+        plt.bar(x - width/2, gE["Adj_Baseline_J_per_Task"].values, width, label="Baseline (J/task)")
+        plt.bar(x + width/2, gE["Adj_Coherence_J_per_Task"].values, width, label="Coherence (J/task)")
+        plt.xticks(x, gE["Workload_Name"].astype(str), rotation=20, ha="right")
+        plt.ylabel("PUE-adjusted Joules per task")
+        plt.title("Energy per Task (PUE-adjusted)")
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig(OUT1, dpi=200)
+        plt.close()
+        print(f"Saved: {OUT1}")
+    else:
+        print("Insufficient energy data to plot Energy per Task.")
+
+    # Plot 2: Energy savings %
+    gS = group.dropna(subset=["Energy_Savings_pct"])
+    if not gS.empty:
+        plt.figure(figsize=(10,6))
+        x = np.arange(len(gS))
+        plt.bar(x, gS["Energy_Savings_pct"].values)
+        plt.xticks(x, gS["Workload_Name"].astype(str), rotation=20, ha="right")
+        plt.ylabel("Energy savings (%)")
+        plt.title("Energy Savings by Workload")
+        plt.tight_layout()
+        plt.savefig(OUT2, dpi=200)
+        plt.close()
+        print(f"Saved: {OUT2}")
+    else:
+        print("Insufficient data to plot Energy Savings %.")
+
+    # Plot 3: CO2 savings %
+    gC = group.dropna(subset=["CO2_Savings_pct"])
+    if not gC.empty:
+        plt.figure(figsize=(10,6))
+        x = np.arange(len(gC))
+        plt.bar(x, gC["CO2_Savings_pct"].values)
+        plt.xticks(x, gC["Workload_Name"].astype(str), rotation=20, ha="right")
+        plt.ylabel("CO2 savings (%)")
+        plt.title("CO2 Savings by Workload")
+        plt.tight_layout()
+        plt.savefig(OUT3, dpi=200)
+        plt.close()
+        print(f"Saved: {OUT3}")
+    else:
+        print("Insufficient data to plot CO2 Savings %.")
+
+if __name__ == "__main__":
+    main()

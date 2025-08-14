@@ -1,0 +1,117 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+//# Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+
+
+cmake_minimum_required(VERSION 3.15)
+
+project(SprootRuntime
+  VERSION 1.0
+  DESCRIPTION "Sproot Runtime — Modular Symbolic Thermodynamic Engine"
+  LANGUAGES CXX)
+
+# ---- Build type & C++ standard ----------------------------------------------
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+if(MSVC)
+  add_compile_options(/W4 /permissive-)
+else()
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# ---- Options ----------------------------------------------------------------
+option(USE_ALL_SRC "Build all .cpp in src/ automatically" ON)
+option(BUILD_WITH_PIGPIO "Link pigpio for real GPIO on Raspberry Pi" OFF)
+option(BUILD_WITH_WIRINGPI "Link wiringPi for real GPIO on Raspberry Pi" OFF)
+option(ENABLE_CLANG_TIDY "Run clang-tidy if available" OFF)
+
+# ---- Tools (optional) --------------------------------------------------------
+if(ENABLE_CLANG_TIDY)
+  find_program(CLANG_TIDY_EXE NAMES clang-tidy)
+  if(CLANG_TIDY_EXE)
+    message(STATUS "clang-tidy: ${CLANG_TIDY_EXE}")
+    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
+  endif()
+endif()
+
+# ---- Include directories -----------------------------------------------------
+set(SPROOT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
+include_directories(${SPROOT_INCLUDE_DIR})
+
+# ---- Sources ----------------------------------------------------------------
+if(USE_ALL_SRC)
+  # Picks up main.cpp, SprootWill.cpp, MitochondrialRhythm.cpp, and any others in /src
+  file(GLOB SRC_FILES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.cpp")
+else()
+  set(SRC_FILES
+    src/main.cpp
+    src/SprootWill.cpp
+    src/MitochondrialRhythm.cpp
+  )
+endif()
+
+# ---- Target -----------------------------------------------------------------
+add_executable(sproot_runtime ${SRC_FILES})
+
+# Optional GPIO libs (Linux/RPi)
+if(BUILD_WITH_PIGPIO)
+  target_link_libraries(sproot_runtime PRIVATE pigpio)
+endif()
+if(BUILD_WITH_WIRINGPI)
+  target_link_libraries(sproot_runtime PRIVATE wiringPi)
+endif()
+
+# ---- Install ----------------------------------------------------------------
+install(TARGETS sproot_runtime RUNTIME DESTINATION bin)
+
+# ---- Demo & Simple Tests (Python-based, optional) ----------------------------
+# These targets run the binary to produce a CSV, then check schema/consistency.
+find_package(Python3 QUIET COMPONENTS Interpreter)
+
+if(Python3_Interpreter_FOUND)
+  # Generate demo CSV in build directory
+  add_custom_target(run_demo
+    COMMAND ${CMAKE_COMMAND} -E env
+            SPROOT_LOG_PATH=${CMAKE_BINARY_DIR}/sproot_thermo_log.csv
+            SPROOT_TICKS=60
+            $<TARGET_FILE:sproot_runtime>
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Running sproot_runtime to generate ${CMAKE_BINARY_DIR}/sproot_thermo_log.csv"
+  )
+
+  add_custom_target(test_csv_schema
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/test_csv_schema.py
+            ${CMAKE_BINARY_DIR}/sproot_thermo_log.csv
+    DEPENDS run_demo
+    COMMENT "Checking CSV schema..."
+  )
+
+  add_custom_target(test_rs_psi_consistency
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/test_rs_psi_consistency.py
+            ${CMAKE_BINARY_DIR}/sproot_thermo_log.csv
+    DEPENDS run_demo
+    COMMENT "Checking R_s / Psi_s consistency..."
+  )
+
+  add_custom_target(runtests
+    DEPENDS test_csv_schema test_rs_psi_consistency
+    COMMENT "All simple Python tests completed."
+  )
+endif()
+
+# ---- Usage hints -------------------------------------------------------------
+message(STATUS "Configure:  mkdir build && cd build && cmake ..")
+message(STATUS "Build:      cmake --build . -j")
+message(STATUS "Run demo:   cmake --build . --target run_demo")
+message(STATUS "Tests:      cmake --build . --target runtests  (requires Python3)")
+
+mkdir build && cd build
+cmake ..
+cmake --build . -j
+cmake --build . --target run_demo
+cmake --build . --target runtests

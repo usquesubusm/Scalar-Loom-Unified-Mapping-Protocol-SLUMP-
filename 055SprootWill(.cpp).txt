@@ -1,0 +1,51 @@
+// SprootWill.cpp
+// Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+
+#include "SprootWill.hpp"
+#include <iostream>
+#include <sstream>
+
+namespace {
+
+// simple env fetch with fallback
+double envd(const char* key, double fallback) {
+  const char* v = std::getenv(key);
+  if (!v || !*v) return fallback;
+  std::stringstream ss(v);
+  double out = fallback;
+  ss >> out;
+  return out;
+}
+
+} // anon
+
+namespace sproot {
+
+SprootWill::SprootWill()
+: rsThresh_(0.80), psiThresh_(0.60), ledOn_(false) {
+  // allow env override on construction
+  readEnv();
+}
+
+void SprootWill::setThresholds(double rs, double psi) {
+  rsThresh_ = rs;
+  psiThresh_ = psi;
+}
+
+void SprootWill::readEnv() {
+  rsThresh_  = envd("SPROOT_LED_THRESHOLD_RS",  rsThresh_);
+  psiThresh_ = envd("SPROOT_LED_THRESHOLD_PSI", psiThresh_);
+}
+
+bool SprootWill::evaluate(double R_s, double Psi_s) {
+  bool shouldBeOn = (R_s >= rsThresh_) && (Psi_s >= psiThresh_);
+  if (shouldBeOn != ledOn_) {
+    ledOn_ = shouldBeOn;
+    // Simulate GPIO LED via console (replace with real GPIO if needed)
+    std::cout << (ledOn_ ? "[GPIO] LED ON" : "[GPIO] LED OFF") << std::endl;
+  }
+  return ledOn_;
+}
+
+} // namespace sproot

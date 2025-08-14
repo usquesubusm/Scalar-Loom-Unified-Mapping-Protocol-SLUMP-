@@ -1,0 +1,18 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+//# Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+
+#!/usr/bin/env python3
+# Honey License v1.2 — Symbolic Commons Operating Agreement (compat. CC BY-NC-SA 4.0)
+# This test inspects the console log produced by a short run to ensure LED toggles at least once.
+# Run your binary with a low threshold to force a toggle, capturing stdout to a file, then pass the file here.
+
+import sys
+path = sys.argv[1] if len(sys.argv) > 1 else "stdout.log"
+with open(path, "r", encoding="utf-8", errors="ignore") as f:
+    s = f.read()
+on  = s.count("[GPIO] LED ON")
+off = s.count("[GPIO] LED OFF")
+print("LED ON:", on, "LED OFF:", off)
+if on == 0 and off == 0:
+    print("No LED events detected."); raise SystemExit(1)
+print("LED events detected.")

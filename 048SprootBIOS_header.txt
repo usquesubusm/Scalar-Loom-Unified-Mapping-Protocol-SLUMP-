@@ -1,0 +1,19 @@
+// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025
+// Covered by Honey License v1.2 first, then CC BY‑NC‑SA.
+#ifndef SPROOT_BIOS_H
+#define SPROOT_BIOS_H
+
+#include <functional>
+#include <iostream>
+
+enum SymbolicPhase { INIT, BREATH, RESEED, COLLAPSE };
+
+class SprootBIOS {
+    std::function<void(SymbolicPhase)> callback;
+public:
+    void setCallback(std::function<void(SymbolicPhase)> cb);
+    void initialize();
+    void startBIOSClock(int ticks);
+};
+
+#endif
