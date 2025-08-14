@@ -1,0 +1,26 @@
+Alloy,Elements,ResonanceScore,Source,Architecture,NovelFlag,StabilityHint,Route,RiskNotes
+C+Graphene,Carbon; Graphene phase,1.337,original,laminate,True,interface-only; stable as heterolayer,stack & hot-press/roll; diffusion barrier,graphene interface quality
+C+Be,Carbon; Beryllium,1.215,original,laminate,True,unknown bulk; safety-limited,laminate under inert; Be controls,Be toxicity; strict safety
+B+C,Boron; Carbon,1.212,original,ceramic,False,established ceramics,sintered ceramic routes,brittleness; processing heat
+Mg+C,Magnesium; Carbon,1.164,original,thin-film,True,metastable films likely,co-sputter + anneal + cap,Mg oxidation; adhesion
+Al+C,Aluminum; Carbon,1.103,original,cermet/interface,False,interfaces (Al4C3) known,powder+hot press; interface control,Al4C3 hygroscopicity at interface
+P+C,Phosphorus; Carbon,1.091,original,heterolayer,True,air-sensitive; 2D only,2D transfer in inert; encapsulate,phosphorene oxidation
+C+Mg+P,Carbon; Magnesium; Phosphorus,1.028,original,thin-film,True,unknown; likely metastable,co-sputter; phosphorus control,P handling; film stress
+Si+C,Silicon; Carbon,0.897,original,ceramic,False,established SiC phases,ceramic synthesis (CVD/HP),high hardness; brittle
+Ti+C,Titanium; Carbon,0.896,original,cermet/ceramic,False,established TiC phases,cermet (powder+hot press),brittle; control grain size
+C+Ca,Carbon; Calcium,0.882,original,ceramic,False,reactive carbide known,ceramic routes; handle moisture,high reactivity; safety
+Al+Mg+C,Aluminum; Magnesium; Carbon,0.805,original,laminate/composite,True,composite; process-dependent,laminate with carbon reinforcement,interfacial wetting
+Al+Mg,Aluminum; Magnesium,0.782,original,bulk alloy,False,established alloy system,standard melt/thermomech,standard safety
+Si+Mg+C,Silicon; Magnesium; Carbon,0.664,original,FGM/composite,True,composite; graded feasible,graded deposition/tape casting,thermal mismatch
+C+Mn,Carbon; Manganese,0.648,original,bulk alloy,False,established alloy family,steel processing routes,hydrogen embrittlement risk
+Al+Si+C,Aluminum; Silicon; Carbon,0.614,original,composite,False,composite; established,Al-Si casting + carbon reinforcement,porosity control
+Be/Graphene nano-laminate,Beryllium; Graphene,,new,laminate,True,interface-only; Be safety,stack & hot-roll; barrier layer,Be toxicity; PPE
+Mg–Graphene thin-film,Magnesium; Graphene,,new,thin-film,True,metastable film,co-sputter + ALD cap + anneal,oxidation management
+P–Graphene heterolayer,Phosphorus; Graphene,,new,heterolayer,True,2D only,exfoliate/transfer under inert,oxidation; encapsulate
+Al–C–P interphase cermet,Aluminum; Carbon; Phosphorus,,new,cermet,True,unknown; interface stabilization,powder + hot press,phosphide formation risk
+Mg–C–P metastable film,Magnesium; Carbon; Phosphorus,,new,thin-film,True,unknown; metastable likely,co-sputter; anneal sweep,film stress; P loss
+Si–C–Mg graded composite,Silicon; Carbon; Magnesium,,new,FGM,True,composite feasible,gradient tape casting,thermal mismatch
+Ti–C–Graphene cermet,Titanium; Carbon; Graphene,,new,cermet,True,cermet feasible,powder + hot press,graphene dispersion
+Ca–C–P porous ceramic,Calcium; Carbon; Phosphorus,,new,ceramic,True,unknown; reactive phases,porous ceramic sintering,moisture sensitivity
+B–C–Graphene hard laminate,Boron; Carbon; Graphene,,new,laminate,True,laminate feasible,layer-by-layer hot press,delamination risk
+Al–Mg–Graphene skin,Aluminum; Magnesium; Graphene,,new,laminate,True,laminate feasible,stack & roll; interface control,graphene alignment
