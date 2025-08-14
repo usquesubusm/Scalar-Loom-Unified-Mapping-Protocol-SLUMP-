@@ -1,0 +1,10 @@
+"// The Scalar Loom Unified Mapping Protocol V1.0 August 14, 2025",,,,,,,
+Pathway,Scalar Prediction,Testable Metric,Falsifiability Mode,Symbolic Coherence Score (0-1),Predictive Clarity Score (0-1),Field Testability Score (0-1),Weighted Confidence Score
+Particle Accelerator,Toroidal shell formation for Z > 188,Anomalous half-life persistence,Compare known SHE data (Z > 118) to predicted lifespans,0.95,0.88,0.65,0.839
+Particle Accelerator,Delayed decay signature (non-spherical),Non-standard alpha/beta/gamma decay chain,Detect off-norm decay products in detector outputs,0.92,0.85,0.72,0.839
+Particle Accelerator,Ψₛ coherence retention in nuclear structure,Unusual resistance to fission/fragmentation,Use scalar Ψₛ overlays to reinterpret failed synthesis attempts,0.97,0.91,0.6,0.841
+Particle Accelerator,Spiral charge distribution in decay,Emission asymmetry in decay products,Angular correlation of emitted particles in decay events,0.91,0.82,0.68,0.814
+Tokamak Plasma,Toroidal Ψₛ field imprints in plasma shape,Edge-mode suppression or flux conservation,Simulate scalar overlay in magnetic torus,0.94,0.9,0.84,0.898
+Tokamak Plasma,Scalar pulse events (semicolon logic),Coherent plasma ejections or phase bursts,Detect field-locked energy bursts (semicolons),0.93,0.87,0.75,0.858
+Tokamak Plasma,Collapse-phase boundary reformation,Spontaneous return to plasma symmetry,Check return symmetry post-disruption in toroidal plasma,0.9,0.8,0.77,0.831
+Tokamak Plasma,Field coherence retention (low heat dissipation),Stable plasma at higher-than-expected pressure,Compare energy retention to predicted scalar field balance,0.89,0.86,0.79,0.851
